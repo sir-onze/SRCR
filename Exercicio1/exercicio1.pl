@@ -10,11 +10,12 @@
 
 %utente: IdUt, Nome, Idade, Cidade -> {V,F}
 
-%serviço: IdServ, Descrição, Instituição, Cidade -> {V,F}
+%servico: IdServ, Descrição, Instituição, Cidade -> {V,F}
 
 %consulta: Data, IdUt, IdServ, Custo -> {V,F}
 
 :- dynamic utente/4.
+:- dynamic servico/4.
 %--------------------------------- Base de conhecimento - - - - - - - - - -  -  -  -  -   -
 % - Utentes
 
@@ -35,23 +36,23 @@ utente(8,ricardosquirtle,braga).
 utente(69,lucasblastoise,braga).
 
 
-% - Serviços
+% - servicos
 
-serviço(00001,cardiologia,hospital,braga).
-serviço(00002,enfermaria,hospital,braga).
-serviço(00003,psiquiatria,hospital,guimaraes).
-serviço(00004,podologia,centrodesaude,barcelos).
-serviço(00005,geneacologia,hospital,guimaraes).
-serviço(00001,cardiologia,clinica,barcelos).
-serviço(00007,dermatologia,clinicaprivada,porto).
-serviço(00002,enfermaria,centrodesaude,barcelos).
-serviço(00009,oftalmologia,hospital,guimaraes).
-serviço(00010,fisioterapia,hospital,porto).
-serviço(00011,ortopedia,clinicaprivada,barcelos).
-serviço(00011,enfermaria,hospital,porto).
-serviço(00002,enfermaria,centrodesaude,guimaraes).
-serviço(00014,clinicageral,centrodesaude,braga).
-serviço(00015,urgencia,hospitalprivado,braga).
+servico(00001,cardiologia,hospital,braga).
+servico(00002,enfermaria,hospital,braga).
+servico(00003,psiquiatria,hospital,guimaraes).
+servico(00004,podologia,centrodesaude,barcelos).
+servico(00005,geneacologia,hospital,guimaraes).
+servico(00001,cardiologia,clinica,barcelos).
+servico(00007,dermatologia,clinicaprivada,porto).
+servico(00002,enfermaria,centrodesaude,barcelos).
+servico(00009,oftalmologia,hospital,guimaraes).
+servico(00010,fisioterapia,hospital,porto).
+servico(00011,ortopedia,clinicaprivada,barcelos).
+servico(00011,enfermaria,hospital,porto).
+servico(00002,enfermaria,centrodesaude,guimaraes).
+servico(00014,clinicageral,centrodesaude,braga).
+servico(00015,urgencia,hospitalprivado,braga).
 
 % - Consultas
 
@@ -61,14 +62,13 @@ consulta(200319,69,00005,69).
 %--------------------------------- 1.Predicados - - - - - - - - - -  -  -  -  -   -
 
 %--------1.1.Predicado de Registo --------------
-%utente: IdUt, Nome, Idade, Cidade -> {V,F}
-%serviço: IdServ, Descrição, Instituição, Cidade -> {V,F}
-%consulta: Data, IdUt, IdServ, Custo -> {V,F}
 
 registerU(X,Y,Z,W) :- assert(utente(X,Y,Z,W)).
-registerU(X,Y,Z,W) :-retract(utente(X,Y,Z,W)),!,fail.
+registerU(X,Y,Z,W) :- retract(utente(X,Y,Z,W)),!,fail.
 
+registerS(X,Y,Z,W) :- assert(servico(X,Y,Z,W)).
+registerS(X,Y,Z,W) :- retract(servico(X,Y,Z,W)),!,fail.
 
-
-
+registerC(X,Y,Z,W) :- assert(consulta(X,Y,Z,W)).
+registerC(X,Y,Z,W) :- retract(consulta(X,Y,Z,W)),!,fail.
 
