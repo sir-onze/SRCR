@@ -1,5 +1,6 @@
 %--------------------------------- - - - - - - - - - -  -  -  -  -   -
 % Trabalho Parte 1
+
 % - Configurações iniciais
 
 :- set_prolog_flag( discontiguous_warnings,off ).
@@ -9,13 +10,15 @@
 % - Definicoes iniciais de entidades presentes na base de conhecimento:
 
 %utente: IdUt, Nome, Idade, Cidade -> {V,F}
-
 %servico: IdServ, Descrição, Instituição, Cidade -> {V,F}
-
 %consulta: Data, IdUt, IdServ, Custo -> {V,F}
+
+% - Opções para permitirem inserções e remoções na base de conhecimento
 
 :- dynamic utente/4.
 :- dynamic servico/4.
+:- dynamic consulta/4.
+
 %--------------------------------- Base de conhecimento - - - - - - - - - -  -  -  -  -   -
 % - Utentes
 
