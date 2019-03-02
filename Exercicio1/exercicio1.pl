@@ -5,7 +5,6 @@
 :- set_prolog_flag( discontiguous_warnings,off ).
 :- set_prolog_flag( single_var_warnings,off ).
 :- set_prolog_flag( unknown,fail ).
-:- op(900,xfy,'::').
 
 % - Definicoes iniciais de entidades presentes na base de conhecimento:
 
@@ -15,6 +14,7 @@
 
 %consulta: Data, IdUt, IdServ, Custo -> {V,F}
 
+:- dynamic utente/4.
 %--------------------------------- Base de conhecimento - - - - - - - - - -  -  -  -  -   -
 % - Utentes
 
@@ -57,4 +57,18 @@ serviço(00015,urgencia,hospitalprivado,braga).
 
 consulta(010218,12345,00001,50).
 consulta(200319,69,00005,69).
+
+%--------------------------------- 1.Predicados - - - - - - - - - -  -  -  -  -   -
+
+%--------1.1.Predicado de Registo --------------
+%utente: IdUt, Nome, Idade, Cidade -> {V,F}
+%serviço: IdServ, Descrição, Instituição, Cidade -> {V,F}
+%consulta: Data, IdUt, IdServ, Custo -> {V,F}
+
+registerU(X,Y,Z,W) :- assert(utente(X,Y,Z,W)).
+registerU(X,Y,Z,W) :-retract(utente(X,Y,Z,W)),!,fail.
+
+
+
+
 
