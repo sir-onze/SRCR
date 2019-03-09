@@ -46,26 +46,26 @@ utente(69,lucasblastoise,23,braga).
 
 % - servicos
 
-servico(00001,cardiologia,hospital,braga).
-servico(00002,enfermaria,hospital,braga).
-servico(00003,psiquiatria,hospital,guimaraes).
-servico(00004,podologia,centrodesaude,barcelos).
-servico(00005,geneacologia,hospital,guimaraes).
-servico(00001,cWcac,clinica,barcelos).
-servico(00007,dermatologia,clinicaprivada,porto).
-servico(00002,enfermaria,centrodesaude,barcelos).
-servico(00009,oftalmologia,hospital,guimaraes).
-servico(00010,fisioterapia,hospital,porto).
-servico(00011,ortopedia,clinicaprivada,barcelos).
-servico(00011,enfermaria,hospital,porto).
-servico(00002,enfermaria,centrodesaude,guimaraes).
-servico(00014,clinicageral,centrodesaude,braga).
-servico(00015,urgencia,hospitalprivado,braga).
+servico(1,cardiologia,hospital,braga).
+servico(2,enfermaria,hospital,braga).
+servico(3,psiquiatria,hospital,guimaraes).
+servico(4,podologia,centrodesaude,barcelos).
+servico(5,geneacologia,hospital,guimaraes).
+servico(6,cWcac,clinica,barcelos).
+servico(7,dermatologia,clinicaprivada,porto).
+servico(8,enfermaria,centrodesaude,barcelos).
+servico(9,oftalmologia,hospital,guimaraes).
+servico(10,fisioterapia,hospital,porto).
+servico(11,ortopedia,clinicaprivada,barcelos).
+servico(12,enfermaria,hospital,porto).
+servico(13,enfermaria,centrodesaude,guimaraes).
+servico(14,clinicageral,centrodesaude,braga).
+servico(15,urgencia,hospitalprivado,braga).
 
 % - Consultas
 
-consulta(01-02-18,12345,00001,50).
-consulta(20-03-19,69,00005,69).
+consulta(01-02-18,12345,1,50).
+consulta(20-03-19,69,5,69).
 
 %--------------------------------- Predicados auxiliares - - - - - - - - - -  -  -  -  -   -
 
@@ -99,6 +99,7 @@ remOne(X,[Q|XS],[Y|YS]) :- remOne(X,XS,YS).
 
 
 %-------- 1 - Extensão do Predicado que permite Registarutentes, serviçose consultas --------------
+
 
 
 
@@ -144,11 +145,18 @@ custoServico(CUSTO,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,
 %-------- 6 - Extensão do Predicado que permite identificar os utentes de um serviço/instituição --------------
 
 
+utenteServico(ID,R) :- solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),servico(ID,DESC,INSTITUICAO,CIDADEU),consulta(DAT,IDU,ID,C)),R).
+
+utenteInstituicao(INSTITUICAO,R) :- solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),servico(ID,DESC,INSTITUICAO,CIDADEU),consulta(DAT,IDU,ID,C)),R).
+
 
 %-------- 7 - Extensão do Predicado que permite identificar serviços realizados por utente/instituição/cidade --------------
 
 
 
+
+
+%-------- 8 - Extensão do Predicado que permite calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data --------------
 
 
 
