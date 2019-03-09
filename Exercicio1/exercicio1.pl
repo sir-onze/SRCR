@@ -7,11 +7,16 @@
 :- set_prolog_flag( single_var_warnings,off ).
 :- set_prolog_flag( unknown,fail ).
 
+% - definição de invariante
+
+:- op(900,xfy,'::').
+
 % - Definicoes iniciais de entidades presentes na base de conhecimento:
 
 %utente: IdUt, Nome, Idade, Cidade -> {V,F}
 %servico: IdServ, Descrição, Instituição, Cidade -> {V,F}
 %consulta: Data, IdUt, IdServ, Custo -> {V,F}
+%instituicao: IdIn,Nome,Cidade -> {V,F}
 
 % - Opções para permitirem inserções e remoções na base de conhecimento
 
@@ -34,9 +39,9 @@ utente(28293,margaridaleao,20,braga).
 utente(31323,fredericasantos,20,beja).
 utente(33345,paulotabuada,20,sintra).
 utente(51523,adrianodovitoria20,aveiro).
-utente(11,tiagotombado,braga).
-utente(8,ricardosquirtle,braga).
-utente(69,lucasblastoise,braga).
+utente(11,tiagotombado,22,braga).
+utente(8,ricardosquirtle,22,braga).
+utente(69,lucasblastoise,23,braga).
 
 
 % - servicos
@@ -46,7 +51,7 @@ servico(00002,enfermaria,hospital,braga).
 servico(00003,psiquiatria,hospital,guimaraes).
 servico(00004,podologia,centrodesaude,barcelos).
 servico(00005,geneacologia,hospital,guimaraes).
-servico(00001,cardiologia,clinica,barcelos).
+servico(00001,cWcac,clinica,barcelos).
 servico(00007,dermatologia,clinicaprivada,porto).
 servico(00002,enfermaria,centrodesaude,barcelos).
 servico(00009,oftalmologia,hospital,guimaraes).
@@ -62,16 +67,47 @@ servico(00015,urgencia,hospitalprivado,braga).
 consulta(010218,12345,00001,50).
 consulta(200319,69,00005,69).
 
-%--------------------------------- 1.Predicados - - - - - - - - - -  -  -  -  -   -
+%--------------------------------- Predicados auxiliares - - - - - - - - - -  -  -  -  -   -
 
-%--------1.1.Predicado de Registo --------------
+%--------Extensão do Predicado de inserção  --------------
 
-registerU(X,Y,Z,W) :- assert(utente(X,Y,Z,W)).
-registerU(X,Y,Z,W) :- retract(utente(X,Y,Z,W)),!,fail.
 
-registerS(X,Y,Z,W) :- assert(servico(X,Y,Z,W)).
-registerS(X,Y,Z,W) :- retract(servico(X,Y,Z,W)),!,fail.
+insere(X) :- assert(X).
+insere(X) :- retract(X),!,fail.
 
-registerC(X,Y,Z,W) :- assert(consulta(X,Y,Z,W)).
-registerC(X,Y,Z,W) :- retract(consulta(X,Y,Z,W)),!,fail.
+
+%--------Extensão do Predicado de Remoção  --------------
+
+
+remove(X) :- retract(X).
+remove(X) :- assert(X),!,fail.
+
+
+%--------Extensão do Predicado de encontrar todas as soluções  --------------
+
+
+solucoes(T,Q,S):- 
+        findall(T,Q,S).
+
+
+%-------- 2 - Extensão do Predicado que permite identificar todas as Instituições prestadoras de servico --------------
+
+
+
+
+
+
+%-------- 2 - Extensão do Predicado que permite identificar utentes por id e nome,servico por id e consulta por id de servico e id de utente--------------
+
+idUtente(ID,R) :- solucoes((ID,N,I,C), utente(ID,N,I,C), R).
+
+nomeUtente(NOME,R) :- solucoes((ID,NOME,I,C),utente(ID,NOME,I,C),R).
+
+servConsulta(ID,R) :- solucoes((DAT,UT,ID,C), consulta(DAT,UT,ID,C), R).
+
+utenteConsulta(ID,R) :- solucoes((DAT,ID,SER,C),consulta(DAT,ID,SER,C),R). 
+
+
+
+
 
