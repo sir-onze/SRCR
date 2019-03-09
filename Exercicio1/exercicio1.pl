@@ -16,7 +16,6 @@
 %utente: IdUt, Nome, Idade, Cidade -> {V,F}
 %servico: IdServ, Descrição, Instituição, Cidade -> {V,F}
 %consulta: Data, IdUt, IdServ, Custo -> {V,F}
-%instituicao: IdIn,Nome,Cidade -> {V,F}
 
 % - Opções para permitirem inserções e remoções na base de conhecimento
 
@@ -66,6 +65,7 @@ servico(15,urgencia,hospitalprivado,braga).
 
 consulta(01-02-18,12345,1,50).
 consulta(20-03-19,69,5,69).
+consulta(02-02-18,12345,1,50).
 
 %--------------------------------- Predicados auxiliares - - - - - - - - - -  -  -  -  -   -
 
@@ -97,13 +97,23 @@ remOne(X,[X|XS],XS).
 remOne(X,[Q|XS],[Y|YS]) :- remOne(X,XS,YS).
 
 
-
-%-------- 1 - Extensão do Predicado que permite Registarutentes, serviçose consultas --------------
-
+%-------- (v) - Extensão do Predicado de somar todos os elementos de uma lista --------------
 
 
+sum([],0).
+sum([H|T],R) :- sum(T,Y),R is Y+H.
 
-%-------- 2 - Extensão do Predicado que permite Registarutentes, serviçose consultas --------------
+%--------------------------------- Funcionalidades - - - - - - - - - -  -  -  -  -   -
+
+
+
+
+%-------- 1 - Extensão do Predicado que permite registar utentes, serviços e consultas --------------
+
+
+
+
+%-------- 2 - Extensão do Predicado que permite eliminar utentes, serviços e consultas --------------
 
 
 
@@ -152,12 +162,18 @@ utenteInstituicao(INSTITUICAO,R) :- solucoes((IDU, NOME, IDADE, CIDADE),(utente(
 
 %-------- 7 - Extensão do Predicado que permite identificar serviços realizados por utente/instituição/cidade --------------
 
+%utente: IdUt, Nome, Idade, Cidade -> {V,F}
+%servico: IdServ, Descrição, Instituição, Cidade -> {V,F}
+%consulta: Data, IdUt, IdServ, Custo -> {V,F}
 
+servicoUtente(IDU,R) :- solucoes((ID,DESC,INST,CID),(utente(IDUse,NOME,IDADE,CIDADE),servico(ID,DESC,INST,CID),consulta(DAT,IDU,ID,C)),R).
 
+servicoInstituicao(INSTITUICAO,R) :- solucoes((ID,DESC,INSTITUICAO,CID),(utente(IDU,NOME,IDADE,CIDADE),servico(ID,DESC,INSTITUICAO,CID),consulta(DAT,IDU,ID,C)),R).
+
+servicoCidade(CIDADE,R) :- solucoes((ID,DESC,INST,CIDADE),(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,C)),R).
 
 
 %-------- 8 - Extensão do Predicado que permite calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data --------------
-
 
 
 
