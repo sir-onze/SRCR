@@ -16,6 +16,7 @@
 %utente: IdUt, Nome, Idade, Cidade -> {V,F}
 %servico: IdServ, Descrição, Instituição, Cidade -> {V,F}
 %consulta: Data, IdUt, IdServ, Custo -> {V,F}
+%instituicao : idInst, Nome, Cidade -> {V,F}
 
 % - Opções para permitirem inserções e remoções na base de conhecimento
 
@@ -122,8 +123,15 @@ sum([H|T],R) :- sum(T,Y),R is Y+H.
 %-------- 3 - Extensão do Predicado que permite identificar todas as Instituições prestadoras de servico --------------
 
 
-
-
+instituicao(1,hospital,braga).
+instituicao(2,hospital,guimaraes).
+instituicao(3,centrodesaude,barcelos).
+instituicao(4,clinica,barcelos).
+instituicao(5,clinicaprivada,porto).
+instituicao(6,hospital,porto).
+instituicao(7,hospitalprivado,braga).
+instituicao(8,centrodesaude,braga).
+instituicao(9,centrodesaude,guimaraes).
 
 
 %-------- 4 - Extensão do Predicado que permite identificar utentes por id e nome,servico por id e consulta por id de servico e id de utente--------------
