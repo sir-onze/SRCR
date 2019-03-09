@@ -98,8 +98,17 @@ remOne(X,[Q|XS],[Y|YS]) :- remOne(X,XS,YS).
 
 
 
+%-------- 1 - Extensão do Predicado que permite Registarutentes, serviçose consultas --------------
 
-%-------- 2 - Extensão do Predicado que permite identificar todas as Instituições prestadoras de servico --------------
+
+
+%-------- 2 - Extensão do Predicado que permite Registarutentes, serviçose consultas --------------
+
+
+
+
+
+%-------- 3 - Extensão do Predicado que permite identificar todas as Instituições prestadoras de servico --------------
 
 
 
@@ -121,14 +130,25 @@ utenteConsulta(ID,R) :- solucoes((DAT,ID,SER,C),consulta(DAT,ID,SER,C),R).
 
 
 %-------- 5 - Extensão do Predicado que permite Identificar serviços prestados por instituição/cidade/datas/custo --------------
-%servico: IdServ, Descrição, Instituição, Cidade -> {V,F}
-%consulta: Data, IdUt, IdServ, Custo -> {V,F}
+
 
 instServico(INSTITUICAO,R) :- solucoes((ID,DESC,INSTITUICAO,C),servico(ID,DESC,INSTITUICAO,C),R).
 
 cidadeServico(CIDADE,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),servico(ID,DESC,INSTITUICAO,CIDADE),R).
 
 dataServico(DAT,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,ID,C),servico(ID,DESC,INSTITUICAO,CIDADE)),R).
+
+custoServico(CUSTO,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,ID,CUSTO),servico(ID,DESC,INSTITUICAO,CIDADE)),R).
+
+
+%-------- 6 - Extensão do Predicado que permite identificar os utentes de um serviço/instituição --------------
+
+
+
+%-------- 7 - Extensão do Predicado que permite identificar serviços realizados por utente/instituição/cidade --------------
+
+
+
 
 
 
