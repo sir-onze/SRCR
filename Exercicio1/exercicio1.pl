@@ -64,30 +64,39 @@ servico(00015,urgencia,hospitalprivado,braga).
 
 % - Consultas
 
-consulta(010218,12345,00001,50).
-consulta(200319,69,00005,69).
+consulta(01-02-18,12345,00001,50).
+consulta(20-03-19,69,00005,69).
 
 %--------------------------------- Predicados auxiliares - - - - - - - - - -  -  -  -  -   -
 
-%--------Extensão do Predicado de inserção  --------------
+%-------- (i) - Extensão do Predicado de inserção  --------------
 
 
 insere(X) :- assert(X).
 insere(X) :- retract(X),!,fail.
 
 
-%--------Extensão do Predicado de Remoção  --------------
+%-------- (ii) - Extensão do Predicado de Remoção  --------------
 
 
 remove(X) :- retract(X).
 remove(X) :- assert(X),!,fail.
 
 
-%--------Extensão do Predicado de encontrar todas as soluções  --------------
+%-------- (iii) - Extensão do Predicado de encontrar todas as soluções  --------------
 
 
 solucoes(T,Q,S):- 
         findall(T,Q,S).
+
+
+%-------- (iv) - Extensão do Predicado de remover repetidos  --------------
+
+remOne(X,[],[]).
+remOne(X,[X|XS],XS).
+remOne(X,[Q|XS],[Y|YS]) :- remOne(X,XS,YS).
+
+
 
 
 %-------- 2 - Extensão do Predicado que permite identificar todas as Instituições prestadoras de servico --------------
@@ -97,16 +106,29 @@ solucoes(T,Q,S):-
 
 
 
-%-------- 2 - Extensão do Predicado que permite identificar utentes por id e nome,servico por id e consulta por id de servico e id de utente--------------
+%-------- 4 - Extensão do Predicado que permite identificar utentes por id e nome,servico por id e consulta por id de servico e id de utente--------------
+
 
 idUtente(ID,R) :- solucoes((ID,N,I,C), utente(ID,N,I,C), R).
 
 nomeUtente(NOME,R) :- solucoes((ID,NOME,I,C),utente(ID,NOME,I,C),R).
 
+idServ(ID,R) :- solucoes((ID,SERV,INS,LOC),servico(ID,SERV,INS,LOC)).
+
 servConsulta(ID,R) :- solucoes((DAT,UT,ID,C), consulta(DAT,UT,ID,C), R).
 
 utenteConsulta(ID,R) :- solucoes((DAT,ID,SER,C),consulta(DAT,ID,SER,C),R). 
 
+
+%-------- 5 - Extensão do Predicado que permite Identificar serviços prestados por instituição/cidade/datas/custo --------------
+%servico: IdServ, Descrição, Instituição, Cidade -> {V,F}
+%consulta: Data, IdUt, IdServ, Custo -> {V,F}
+
+instServico(INSTITUICAO,R) :- solucoes((ID,DESC,INSTITUICAO,C),servico(ID,DESC,INSTITUICAO,C),R).
+
+cidadeServico(CIDADE,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),servico(ID,DESC,INSTITUICAO,CIDADE),R).
+
+dataServico(DAT,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,ID,C),servico(ID,DESC,INSTITUICAO,CIDADE)),R).
 
 
 
