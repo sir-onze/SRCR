@@ -23,6 +23,7 @@
 :- dynamic utente/4.
 :- dynamic servico/4.
 :- dynamic consulta/4.
+:- dynamic instituicao/3.
 
 %--------------------------------- Base de conhecimento - - - - - - - - - -  -  -  -  -   -
 % - Utentes
@@ -97,6 +98,12 @@ remOne(X,[],[]).
 remOne(X,[X|XS],XS).
 remOne(X,[Q|XS],[Y|YS]) :- remOne(X,XS,YS).
 
+%remReps(X,[],[]).
+%remReps(X,[H|T],[Y|YS]) :- remOne(X,[H|T],R),remReps(X,T,R).
+
+remReps([],[]).
+remReps([H|T],[Y|YS]) :- remOne(H,T,R),remReps(R,YS).
+
 
 %-------- (v) - Extensão do Predicado de somar todos os elementos de uma lista --------------
 
@@ -137,48 +144,58 @@ instituicao(9,centrodesaude,guimaraes).
 %-------- 4 - Extensão do Predicado que permite identificar utentes por id e nome,servico por id e consulta por id de servico e id de utente--------------
 
 
-idUtente(ID,R) :- solucoes((ID,N,I,C), utente(ID,N,I,C), R).
+idUtente(ID,R) :- solucoes((ID,N,I,C), utente(ID,N,I,C), R),remReps(R,RES).
 
-nomeUtente(NOME,R) :- solucoes((ID,NOME,I,C),utente(ID,NOME,I,C),R).
+nomeUtente(NOME,R) :- solucoes((ID,NOME,I,C),utente(ID,NOME,I,C),R),remReps(R,RES).
 
-idServ(ID,R) :- solucoes((ID,SERV,INS,LOC),servico(ID,SERV,INS,LOC)).
+idServ(ID,R) :- solucoes((ID,SERV,INS,LOC),servico(ID,SERV,INS,LOC)),remReps(R,RES).
 
-servConsulta(ID,R) :- solucoes((DAT,UT,ID,C), consulta(DAT,UT,ID,C), R).
+servConsulta(ID,R) :- solucoes((DAT,UT,ID,C), consulta(DAT,UT,ID,C), R),remReps(R,RES).
 
-utenteConsulta(ID,R) :- solucoes((DAT,ID,SER,C),consulta(DAT,ID,SER,C),R). 
+utenteConsulta(ID,R) :- solucoes((DAT,ID,SER,C),consulta(DAT,ID,SER,C),R),remReps(R,RES). 
 
 
 %-------- 5 - Extensão do Predicado que permite Identificar serviços prestados por instituição/cidade/datas/custo --------------
 
 
-instServico(INSTITUICAO,R) :- solucoes((ID,DESC,INSTITUICAO,C),servico(ID,DESC,INSTITUICAO,C),R).
+instServico(INSTITUICAO,R) :- solucoes((ID,DESC,INSTITUICAO,C),servico(ID,DESC,INSTITUICAO,C),R),remReps(R,RES).
 
-cidadeServico(CIDADE,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),servico(ID,DESC,INSTITUICAO,CIDADE),R).
+cidadeServico(CIDADE,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),servico(ID,DESC,INSTITUICAO,CIDADE),R),remReps(R,RES).
 
-dataServico(DAT,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,ID,C),servico(ID,DESC,INSTITUICAO,CIDADE)),R).
+dataServico(DAT,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,ID,C),servico(ID,DESC,INSTITUICAO,CIDADE)),R),remReps(R,RES).
 
-custoServico(CUSTO,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,ID,CUSTO),servico(ID,DESC,INSTITUICAO,CIDADE)),R).
+custoServico(CUSTO,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,ID,CUSTO),servico(ID,DESC,INSTITUICAO,CIDADE)),R),remReps(R,RES).
 
 
 %-------- 6 - Extensão do Predicado que permite identificar os utentes de um serviço/instituição --------------
 
 
-utenteServico(ID,R) :- solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),servico(ID,DESC,INSTITUICAO,CIDADEU),consulta(DAT,IDU,ID,C)),R).
+utenteServico(ID,R) :- solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),servico(ID,DESC,INSTITUICAO,CIDADEU),consulta(DAT,IDU,ID,C)),R),remReps(R,RES).
 
-utenteInstituicao(INSTITUICAO,R) :- solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),servico(ID,DESC,INSTITUICAO,CIDADEU),consulta(DAT,IDU,ID,C)),R).
+utenteInstituicao(INSTITUICAO,R) :- solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),servico(ID,DESC,INSTITUICAO,CIDADEU),consulta(DAT,IDU,ID,C)),R),remReps(R,RES).
 
 
 %-------- 7 - Extensão do Predicado que permite identificar serviços realizados por utente/instituição/cidade --------------
 
 
-servicoUtente(IDU,R) :- solucoes((ID,DESC,INST,CID),(utente(IDUse,NOME,IDADE,CIDADE),servico(ID,DESC,INST,CID),consulta(DAT,IDU,ID,C)),R).
+servicoUtente(IDU,R) :- solucoes((ID,DESC,INST,CID),(utente(IDUse,NOME,IDADE,CIDADE),servico(ID,DESC,INST,CID),consulta(DAT,IDU,ID,C)),R),remReps(R,RES).
 
-servicoInstituicao(INSTITUICAO,R) :- solucoes((ID,DESC,INSTITUICAO,CID),(utente(IDU,NOME,IDADE,CIDADE),servico(ID,DESC,INSTITUICAO,CID),consulta(DAT,IDU,ID,C)),R).
+servicoInstituicao(INSTITUICAO,R) :- solucoes((ID,DESC,INSTITUICAO,CID),(utente(IDU,NOME,IDADE,CIDADE),servico(ID,DESC,INSTITUICAO,CID),consulta(DAT,IDU,ID,C)),R),remReps(R,RES).
 
-servicoCidade(CIDADE,R) :- solucoes((ID,DESC,INST,CIDADE),(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,C)),R).
+servicoCidade(CIDADE,R) :- solucoes((ID,DESC,INST,CIDADE),(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,C)),R),remReps(R,RES).
 
 %-------- 8 - Extensão do Predicado que permite calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data --------------
 
 
 custoUtente(IDU,R) :- solucoes(Custo,(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,Custo)),R1),sum(R1,R).
+
+custoServico(IDS,R) :- solucoes(Custo,(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,Custo)),R1),sum(R1,R).
+
+custoInstituicao(INST,R) :- solucoes(Custo,(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,Custo)),R1),sum(R1,R).
+
+custoData(DAT,R) :- solucoes(Custo,(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,Custo)),R1),sum(R1,R).
+
+
+
+
 
