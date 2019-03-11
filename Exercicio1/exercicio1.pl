@@ -7,16 +7,11 @@
 :- set_prolog_flag( single_var_warnings,off ).
 :- set_prolog_flag( unknown,fail ).
 
-% - definição de invariante
-
-:- op(900,xfy,'::').
-
 % - Definicoes iniciais de entidades presentes na base de conhecimento:
 
 %utente: IdUt, Nome, Idade, Cidade -> {V,F}
 %servico: IdServ, Descrição, Instituição, Cidade -> {V,F}
 %consulta: Data, IdUt, IdServ, Custo -> {V,F}
-%instituicao : idInst, Nome, Cidade -> {V,F}
 
 % - Opções para permitirem inserções e remoções na base de conhecimento
 
@@ -129,6 +124,7 @@ sum([H|T],R) :- sum(T,Y),R is Y+H.
 
 %-------- 3 - Extensão do Predicado que permite identificar todas as Instituições prestadoras de servico --------------
 
+%instituicao : idInst, Nome, Cidade -> {V,F}
 
 instituicao(1,hospital,braga).
 instituicao(2,hospital,guimaraes).
