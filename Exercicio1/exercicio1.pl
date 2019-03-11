@@ -47,7 +47,7 @@ servico(2,enfermaria,hospital,braga).
 servico(3,psiquiatria,hospital,guimaraes).
 servico(4,podologia,centrodesaude,barcelos).
 servico(5,geneacologia,hospital,guimaraes).
-servico(6,cWcac,clinica,barcelos).
+servico(6,podologia,clinica,barcelos).
 servico(7,dermatologia,clinicaprivada,porto).
 servico(8,enfermaria,centrodesaude,barcelos).
 servico(9,oftalmologia,hospital,guimaraes).
@@ -62,7 +62,13 @@ servico(15,urgencia,hospitalprivado,braga).
 
 consulta(01-02-18,12345,1,50).
 consulta(20-03-19,69,5,69).
-consulta(02-02-18,12345,1,50).
+consulta(12-02-18,12345,1,50).
+consulta(22-05-18,12345,7,50).
+consulta(25-06-18,12345,15,50).
+consulta(25-06-18,23245,15,50).
+consulta(02-02-18,11,15,50).
+consulta(02-02-18,8,12,50).
+consulta(02-02-18,31323,5,50).
 
 %--------------------------------- Predicados auxiliares - - - - - - - - - -  -  -  -  -   -
 
@@ -83,8 +89,7 @@ remove(X) :- assert(X),!,fail.
 %-------- (iii) - Extensão do Predicado de encontrar todas as soluções  --------------
 
 
-solucoes(T,Q,S):- 
-        findall(T,Q,S).
+solucoes(T,Q,S) :- findall(T,Q,S).
 
 
 %-------- (iv) - Extensão do Predicado de remover repetidos  --------------
@@ -179,6 +184,7 @@ servicoUtente(IDU,R) :- solucoes((ID,DESC,INST,CID),(utente(IDUse,NOME,IDADE,CID
 servicoInstituicao(INSTITUICAO,R) :- solucoes((ID,DESC,INSTITUICAO,CID),(utente(IDU,NOME,IDADE,CIDADE),servico(ID,DESC,INSTITUICAO,CID),consulta(DAT,IDU,ID,C)),R),remReps(R,RES).
 
 servicoCidade(CIDADE,R) :- solucoes((ID,DESC,INST,CIDADE),(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,C)),R),remReps(R,RES).
+
 
 %-------- 8 - Extensão do Predicado que permite calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data --------------
 
