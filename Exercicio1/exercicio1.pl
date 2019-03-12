@@ -129,12 +129,12 @@ size([H|T],R) :- size(T,Y), R is 1+Y.
 %-------- (i) - Inserção de utente  --------------
 
 
-+utente(IDU,NOME,CIDADE,IDADE) :- solucoes(ID,utente(IDU,X,Y,Z),R),size(R,1).
++utente(IDU,NOME,CIDADE,IDADE) :- solucoes(IDU,utente(IDU,X,Y,Z),R),size(R,1).
 
 
 %-------- (ii) - Remoção de utente  --------------
 
--utente(IDU,NOME,CIDADE,IDADE) :- solucoes(ID,utente(IDU,X,Y,Z),R),size(R,0).
+-utente(IDU,NOME,CIDADE,IDADE) :- solucoes(IDU,utente(IDU,X,Y,Z),R),size(R,0).
 
 
 %-------- (iii) - Inserção de servico  --------------
@@ -168,9 +168,10 @@ teste([]).
 teste([H|T]) :- H,teste(T).
 
 
-evolucao(T) :- solucoes(T,+T::I,R),insere(T),teste(T).
+evolucao(T) :- solucoes(T,+T::I,R),insere(T).
 
-involucao(T) :- solucoes(T,-T::I,R),remove(T),teste(T).
+
+involucao(T) :- solucoes(T,-T::I,R),remove(T).
 
 
 %--------------------------------- Funcionalidades - - - - - - - - - -  -  -  -  -   -
