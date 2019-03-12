@@ -129,20 +129,35 @@ size([H|T],R) :- size(T,Y), R is 1+Y.
 %-------- (i) - Inserção de utente  --------------
 
 
++utente(IDU,NOME,CIDADE,IDADE) :- solucoes(ID,utente(IDU,X,Y,Z),R),size(R,1).
+
+
 %-------- (ii) - Remoção de utente  --------------
+
+-utente(IDU,NOME,CIDADE,IDADE) :- solucoes(ID,utente(IDU,X,Y,Z),R),size(R,0).
 
 
 %-------- (iii) - Inserção de servico  --------------
+
++servico(IDS,NOME,CIDADE,IDADE) :- solucoes(IDS,utente(IDU,X,Y,Z),R),size(R,1).
 
 
 %-------- (iv) - Remoção de servico  --------------
 
 
+-servico(IDS,NOME,CIDADE,IDADE) :- solucoes(IDS,utente(IDU,X,Y,Z),R),size(R,0).
+
+
 %-------- (v) - Inserção de consulta  --------------
 
 
++consulta(IDC,NOME,CIDADE,IDADE) :- solucoes(IDC,utente(IDU,X,Y,Z),R),size(R,1).
+
 
 %-------- (vi) - Remoção de consulta  --------------
+
+
+-consulta(IDC,NOME,CIDADE,IDADE) :- solucoes(IDC,utente(IDU,X,Y,Z),R),size(R,0).
 
 
 %--------------------------------- Funcionalidades - - - - - - - - - -  -  -  -  -   -
