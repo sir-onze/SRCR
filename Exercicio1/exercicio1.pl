@@ -6,6 +6,7 @@
 :- set_prolog_flag( discontiguous_warnings,off ).
 :- set_prolog_flag( single_var_warnings,off ).
 :- set_prolog_flag( unknown,fail ).
+:- op(900,xfy,'::').
 
 % - Definicoes iniciais de entidades presentes na base de conhecimento:
 
@@ -70,7 +71,9 @@ consulta(02-02-18,11,15,50).
 consulta(02-02-18,8,12,50).
 consulta(02-02-18,31323,5,50).
 
+
 %--------------------------------- Predicados auxiliares - - - - - - - - - -  -  -  -  -   -
+
 
 %-------- (i) - Extensão do Predicado de inserção  --------------
 
@@ -94,6 +97,7 @@ solucoes(T,Q,S) :- findall(T,Q,S).
 
 %-------- (iv) - Extensão do Predicado de remover repetidos  --------------
 
+
 remOne(X,[],[]).
 remOne(X,[X|XS],XS).
 remOne(X,[Q|XS],[Y|YS]) :- remOne(X,XS,YS).
@@ -111,9 +115,37 @@ remReps([H|T],[Y|YS]) :- remOne(H,T,R),remReps(R,YS).
 sum([],0).
 sum([H|T],R) :- sum(T,Y),R is Y+H.
 
+
+%-------- (vi) - Extensão do Predicado de encontrar o comprimento de uma lista --------------
+
+
+size([],0).
+size([H|T],R) :- size(T,Y), R is 1+Y.
+
+
+%--------------------------------- Invariantes Estruturais - - - - - - - - - -  -  -  -  -   -
+
+
+%-------- (i) - Inserção de utente  --------------
+
+
+%-------- (ii) - Remoção de utente  --------------
+
+
+%-------- (iii) - Inserção de servico  --------------
+
+
+%-------- (iv) - Remoção de servico  --------------
+
+
+%-------- (v) - Inserção de consulta  --------------
+
+
+
+%-------- (vi) - Remoção de consulta  --------------
+
+
 %--------------------------------- Funcionalidades - - - - - - - - - -  -  -  -  -   -
-
-
 
 
 %-------- 1 - Extensão do Predicado que permite registar utentes, serviços e consultas --------------
