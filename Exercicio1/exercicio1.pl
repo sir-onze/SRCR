@@ -79,14 +79,14 @@ consulta(02-02-18,31323,5,50).
 
 
 insere(X) :- assert(X).
-insere(X) :- retract(X),!,fail.
+%insere(X) :- retract(X),!,fail.
 
 
 %-------- (ii) - Extensão do Predicado de Remoção  --------------
 
 
 remove(X) :- retract(X).
-remove(X) :- assert(X),!,fail.
+%remove(X) :- assert(X),!,fail.
 
 
 %-------- (iii) - Extensão do Predicado de encontrar todas as soluções  --------------
@@ -158,6 +158,19 @@ size([H|T],R) :- size(T,Y), R is 1+Y.
 
 
 -consulta(IDC,NOME,CIDADE,IDADE) :- solucoes(IDC,utente(IDU,X,Y,Z),R),size(R,0).
+
+
+
+%--------------------------------- Controlo de integridade da base de conhecimento - - - - - - - - - -  -  -  -  -   -
+
+
+teste([]).
+teste([H|T]) :- H,teste(T).
+
+
+evolucao(T) :- solucoes(T,+T::I,R),insere(T),teste(T).
+
+involucao(T) :- solucoes(T,-T::I,R),remove(T),teste(T).
 
 
 %--------------------------------- Funcionalidades - - - - - - - - - -  -  -  -  -   -
@@ -243,8 +256,4 @@ custoServico(IDS,R) :- solucoes(Custo,(utente(IDU,NOME,IDADE,CID),servico(ID,DES
 custoInstituicao(INST,R) :- solucoes(Custo,(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,Custo)),R1),sum(R1,R).
 
 custoData(DAT,R) :- solucoes(Custo,(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,Custo)),R1),sum(R1,R).
-
-
-
-
 
