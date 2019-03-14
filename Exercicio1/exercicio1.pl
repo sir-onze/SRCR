@@ -52,9 +52,9 @@
 teste([]).
 teste([H|T]) :- H,teste(T).
 
-evolucao(T) :- solucoes(T,+T::I,R),insere(T),teste(R).
+evolucao(T) :- solucoes(I,+T::I,R),insere(T),teste(R).
 
-involucao(T) :- solucoes(T,-T::I,R),remove(T).
+involucao(T) :- solucoes(I,-T::I,R),remove(T).
 
 %--------------------------------- BASE DE CONHECIMENTO (BC) ---------------------------------
 % - Utentes
