@@ -40,7 +40,7 @@ remOne(X,[Q|XS],[Y|YS]) :- remOne(X,XS,YS).
 remReps([],[]).
 remReps([H|T],[Y|YS]) :- remOne(H,T,R), remReps(R,YS).
 
-solucoes(T,Q,S) :- findall(T,Q,S).
+solucoes(T,Q,S) :- findall(T, Q, S).
 
 %---------- Extensão do predicado utente: IdU, Nome, Idade, Morada --------------------------
 
@@ -89,7 +89,7 @@ servico(1,cardiologia,hospital,braga).
 servico(2,enfermaria,hospital,braga).
 servico(3,psiquiatria,hospital,guimaraes).
 servico(4,podologia,centrodesaude,barcelos).
-servico(5,geneacologia,hospital,guimaraes).
+servico(5,ginecologia,hospital,guimaraes).
 servico(6,podologia,clinica,barcelos).
 servico(7,dermatologia,clinicaprivada,porto).
 servico(8,enfermaria,centrodesaude,barcelos).
@@ -173,14 +173,14 @@ involucao(Termo) :-
 %---------- FUNCIONALIDADES -----------------------------------------------------------------
 
 %---------- 1-Extensão do Predicado que permite registar utentes, serviços e consultas ------
-
+%---------- Evolução -----------------------------------------------------------------------
 
 %---------- 2-Extensão do Predicado que permite eliminar utentes, serviços e consultas ------
+%---------- Involução -----------------------------------------------------------------------
 
-
-%---------- 3-Extensão do Predicado que permite identificar todas as Instituições prestadoras de servico --------------
-
-%instituicao : idInst, Nome, Cidade -> {V,F}
+%---------- 3-Extensão do Predicado que permite identificar todas as Instituições prestadoras
+%----------   de servico --------------------------------------------------------------------
+%----------   instituicao : idInst, Nome, Cidade -> {V,F}
 
 instituicao(1,hospital,braga).
 instituicao(2,hospital,guimaraes).
@@ -193,53 +193,50 @@ instituicao(8,centrodesaude,braga).
 instituicao(9,centrodesaude,guimaraes).
 
 
-%-------- 4 - Extensão do Predicado que permite identificar utentes por id e nome,servico por id e consulta por id de servico e id de utente -----------------------------------------------
+%-------- 4-Extensão do Predicado que permite identificar utentes por id e nome,servico por
+%--------   id e consulta por id de servico e id de utente --------------------------------
 
+% Identificar utente por id
+idUtente(Id, S) :- solucoes((Id, N, I, C), utente(Id, N, I, C), S).
 
-idUtente(ID,R) :-
-	solucoes((ID,N,I,C),
-	utente(ID,N,I,C), R).
+% Identificar utente por nome
+nomeUtente(Nome, S) :- solucoes((Id, Nome, I, C), utente(Id, Nome, I, C), S).
 
-nomeUtente(NOME,R) :-
-	solucoes((ID,NOME,I,C),
-	utente(ID,NOME,I,C),R).
+% Identificar serviço por id
+idServ(Id, S) :- solucoes((Id, D, I, C), servico(Id, D, I, C),S).
 
-idServ(ID,R) :-
-	solucoes((ID,SERV,INS,LOC),
-	servico(ID,SERV,INS,LOC)).
+% Identificar consultas por serviço
+servConsulta(Id, S) :- solucoes((I, D, Id, SE, C), consulta(I, D, Id, SE, C), S).
 
-servConsulta(ID,R) :-
-	solucoes((DAT,UT,ID,C),
-		consulta(DAT,UT,ID,C), R).
-
-utenteConsulta(ID,R) :-
-	solucoes((DAT,ID,SER,C),
-	consulta(DAT,ID,SER,C),R).
+% Identificar consultas de um utente
+utenteConsulta(Id, S) :- solucoes((I, D, Id, SE, C), consulta(I, D, Id, SE, C), S).
 
 %-------- 5 - Extensão do Predicado que permite Identificar serviços prestados por instituição, cidade, datas, custo --------------------------------------------------------------------------
 
-instServico(INSTITUICAO,R) :-
-	solucoes((ID,DESC,INSTITUICAO,C),
-	servico(ID,DESC,INSTITUICAO,C),R),
-	remReps(R,RES).
+% Identificar serviços efetuados por uma instituição
+instServico(I, S) :- solucoes((Id, D, I, C), servico(Id, D, I, C), S), remReps(S, R).
 
-cidadeServico(CIDADE,R) :-
+% Identificar serviços por cidade
+cidadeServico(CIDADE, R) :-
 	solucoes((ID,DESC,INSTITUICAO,CIDADE),
 	servico(ID,DESC,INSTITUICAO,CIDADE),R),
 	remReps(R,RES).
 
+% Identificar serviços por data
 dataServico(DAT,R) :-
-	solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,ID,C),
-	servico(ID,DESC,INSTITUICAO,CIDADE)),R),
+	solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(Id, DAT,UT,ID,C),
+	servico(ID,DESC,INSTITUICAO,CIDADE)), R),
 	remReps(R,RES).
 
+% Identificar serviços por custo
 custoServico(CUSTO,R) :-
-	solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,ID,CUSTO),
+	solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(Id,DAT,UT,ID,CUSTO),
 	servico(ID,DESC,INSTITUICAO,CIDADE)),R),
 	remReps(R,RES).
 
 %-------- 6 - Extensão do Predicado que permite identificar os utentes de um serviço, instituição -------------------------------------------------------------------------------------------
 
+% 
 utenteServico(ID,R) :-
 	solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),
 	servico(ID,DESC,INSTITUICAO,CIDADEU),
