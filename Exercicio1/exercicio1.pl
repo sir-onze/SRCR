@@ -1,6 +1,8 @@
-%--------------------------------- - - - - - - - - - -  -  -  -  -   -
-% Trabalho Parte 1
-
+%%---------------------------------------------------------------------------------------------
+% SIST. REPR. CONHECIMENTO E RACIOCINIO - MiEI/3 - EXERCICIO 1
+%
+%
+%----------------------------------------------------------------------------------------------
 % - Configurações iniciais
 
 :- set_prolog_flag( discontiguous_warnings,off ).
@@ -9,7 +11,6 @@
 :- op(900,xfy,'::').
 
 % - Definicoes iniciais de entidades presentes na base de conhecimento:
-
 %utente: IdUt, Nome, Idade, Cidade -> {V,F}
 %servico: IdServ, Descrição, Instituição, Cidade -> {V,F}
 %consulta: Data, IdUt, IdServ, Custo -> {V,F}
@@ -18,46 +19,30 @@
 
 :- dynamic utente/4.
 :- dynamic servico/4.
-:- dynamic consulta/4.
+:- dynamic consulta/5.
 :- dynamic instituicao/3.
 
-%--------------------------------- INVARIANTES ESTRUTURAIS -----------------------------------
-
-%--------------------------------- (i)-Inserção de utente  -----------------------------------
-
-+utente(IDU,NOME,CIDADE,IDADE) :- solucoes(IDU,utente(IDU,X,Y,Z),R),size(R,1).
-
-%--------------------------------- (ii)-Remoção de utente  -----------------------------------
-
--utente(IDU,NOME,CIDADE,IDADE) :- solucoes(IDU,utente(IDU,X,Y,Z),R),size(R,0).
-
-%--------------------------------- (iii)-Inserção de servico  --------------------------------
-
-+servico(IDS,NOME,CIDADE,IDADE) :- solucoes(IDS,utente(IDU,X,Y,Z),R),size(R,1).
-
-%--------------------------------- (iv)-Remoção de servico  ----------------------------------
-
--servico(IDS,NOME,CIDADE,IDADE) :- solucoes(IDS,utente(IDU,X,Y,Z),R),size(R,0).
-
-%--------------------------------- (v)-Inserção de consulta ----------------------------------
-
-+consulta(IDC,NOME,CIDADE,IDADE) :- solucoes(IDC,utente(IDU,X,Y,Z),R),size(R,1).
-
-%--------------------------------- (vi)-Remoção de consulta ----------------------------------
-
--consulta(IDC,NOME,CIDADE,IDADE) :- solucoes(IDC,utente(IDU,X,Y,Z),R),size(R,0).
-
-%--------------------------------- CONTROLO DE INTEGRIDADE DA BC -----------------------------
+%---------- Predicados auxiliares -----------------------------------------------------------
 
 teste([]).
 teste([H|T]) :- H,teste(T).
 
-evolucao(T) :- solucoes(I,+T::I,R),insere(T),teste(R).
+comprimento([],0).
+comprimento([H|T],R) :- comprimento(T,Y), R is 1+Y.
 
-involucao(T) :- solucoes(I,-T::I,R),remove(T).
+soma([],0).
+soma([H|T],R) :- soma(T,Y),R is Y+H.
 
-%--------------------------------- BASE DE CONHECIMENTO (BC) ---------------------------------
-% - Utentes
+remOne(X,[],[]).
+remOne(X,[X|XS],XS).
+remOne(X,[Q|XS],[Y|YS]) :- remOne(X,XS,YS).
+
+remReps([],[]).
+remReps([H|T],[Y|YS]) :- remOne(H,T,R), remReps(R,YS).
+
+solucoes(T,Q,S) :- findall(T,Q,S).
+
+%---------- Extensão do predicado utente: IdU, Nome, Idade, Morada --------------------------
 
 utente(12345,joaocarlos,20,braga).
 utente(67810,martagalo,20,barcelos).
@@ -75,7 +60,30 @@ utente(11,tiagotombado,22,braga).
 utente(8,ricardosquirtle,22,braga).
 utente(69,lucasblastoise,23,braga).
 
-% - servicos
+%---------- Invariante Estrutural: não permite inserção de utentes duplicados ---------------
+
++utente(IdU,_,_,_) :: (
+    solucoes(IdU, utente(IdU,_,_,_), S),
+    comprimento(S, N),
+    N == 1
+).
+
+%---------- Invariante Estrutural: idade tem que estar compreendida entre 1 e 120 -----------
+
++utente(_, _, Idade, _) :: (
+	integer(Idade),
+	Idade >= 0, Idade <120
+).
+
+%---------- Invariante Estrutural: não permite a remoção ------------------------------------
+
+-utente(IdU,_,_,_) :: (
+	solucoes(IdU, utente(IdU,_,_,_), S),
+	comprimento(S, N),
+	N == 0
+).
+
+%---------- Extensão do predicado serviço: IdS, Descrição, Instituição, Cidade --------------
 
 servico(1,cardiologia,hospital,braga).
 servico(2,enfermaria,hospital,braga).
@@ -93,60 +101,84 @@ servico(13,enfermaria,centrodesaude,guimaraes).
 servico(14,clinicageral,centrodesaude,braga).
 servico(15,urgencia,hospitalprivado,braga).
 
-% - Consultas
+%---------- Invariante Estrutural: não permite inserção de serviços duplicados ---------------
 
-consulta(01-02-18,12345,1,50).
-consulta(20-03-19,69,5,69).
-consulta(12-02-18,12345,1,50).
-consulta(22-05-18,12345,7,50).
-consulta(25-06-18,12345,15,50).
-consulta(25-06-18,23245,15,50).
-consulta(02-02-18,11,15,50).
-consulta(02-02-18,8,12,50).
-consulta(02-02-18,31323,5,50).
++servico(IdS,_,_,_) :: (
+	solucoes(IdS, servico(IdS,_,_,_), S),
+	comprimento(S, N),
+	N == 1
+).
 
-%--------------------------------- PREDICADOS AUXILIARES -------------------------------------
+%---------- Invariante Estrutural: remoção de serviço ---------------------------------------
 
-%--------------------------------- (i)-Extensão do Predicado de inserção ---------------------
+-servico(IdS,_,_,_) :: (
+	solucoes(IdS, servico(IdS,_,_,_), S),
+	comprimento(S, N),
+	N == 0
+).
 
-insere(X) :- assert(X).
+%---------- Extensão do predicado consulta: IdC, Data, IdU, IdS, Custo ----------------------
 
-%--------------------------------- (ii)-Extensão do Predicado de Remoção ---------------------
+consulta(1,01-02-18,12345,1,50).
+consulta(2,20-03-19,69,5,69).
+consulta(3,12-02-18,12345,1,50).
+consulta(4,22-05-18,12345,7,50).
+consulta(5,25-06-18,12345,15,50).
+consulta(6,25-06-18,23245,15,50).
+consulta(7,02-02-18,11,15,50).
+consulta(8,02-02-18,8,12,50).
+consulta(9,02-02-18,31323,5,50).
 
-remove(X) :- retract(X).
+%---------- Invariante Estrutural: não permite inserção de consultas duplicadas -------------
 
-%--------------------------------- (iii)-Extensão do Predicado de encontrar todas as soluções-
++consulta(IdC,_,_,_,_) :: (
+	solucoes(IdC,consulta(IdC,_,_,_,_), S),
+	comprimento(S, N),
+	N == 1
+).
 
-solucoes(T,Q,S) :- findall(T,Q,S).
+%---------- Invariante Estrutural: remoção de consulta --------------------------------------
 
-%--------------------------------- (iv)-Extensão do Predicado de remover repetidos  ----------
+-consulta(IdC,_,_,_,_) :: (
+	solucoes(IdC,consulta(IdC,_,_,_,_), S),
+	comprimento(S, N),
+	N == 0
+).
 
-remOne(X,[],[]).
-remOne(X,[X|XS],XS).
-remOne(X,[Q|XS],[Y|YS]) :- remOne(X,XS,YS).
+%--------------------------------------------------------------------------------------------
+% Extensao do predicado que permite a evolucao do conhecimento
 
-remReps([],[]).
-remReps([H|T],[Y|YS]) :- remOne(H,T,R),remReps(R,YS).
+insere(Termo) :- assert(Termo).
+insere(Termo) :- retract(Termo), !, fail.
 
-%-------------------------------- (v) - Extensão do Predicado de somar todos os elementos de uma lista ------------------------
+evolucao(Termo) :-
+	solucoes(Inv, +Termo::Inv, LInv),
+	insere(Termo),
+	teste(LInv).
 
-sum([],0).
-sum([H|T],R) :- sum(T,Y),R is Y+H.
+%--------------------------------------------------------------------------------------------
+% Extensao do predicado que permite a involucao do conhecimento
 
-%-------- (vi) - Extensão do Predicado de encontrar o comprimento de uma lista ---------------
+remove(Termo) :- retract(Termo).
+remove(Termo) :- assert(Termo), !, fail.
 
-size([],0).
-size([H|T],R) :- size(T,Y), R is 1+Y.
-
-%--------------------------------- FUNCIONALIDADES -------------------------------------------
-
-%-------- 1 - Extensão do Predicado que permite registar utentes, serviços e consultas -------
-
-
-%-------- 2 - Extensão do Predicado que permite eliminar utentes, serviços e consultas -------
+involucao(Termo) :-
+	Termo,
+	solucoes(Inv, -Termo::Inv, LInv),
+	remove(Termo),
+	teste(LInv).
 
 
-%-------- 3 - Extensão do Predicado que permite identificar todas as Instituições prestadoras de servico --------------
+
+%---------- FUNCIONALIDADES -----------------------------------------------------------------
+
+%---------- 1-Extensão do Predicado que permite registar utentes, serviços e consultas ------
+
+
+%---------- 2-Extensão do Predicado que permite eliminar utentes, serviços e consultas ------
+
+
+%---------- 3-Extensão do Predicado que permite identificar todas as Instituições prestadoras de servico --------------
 
 %instituicao : idInst, Nome, Cidade -> {V,F}
 
@@ -164,46 +196,111 @@ instituicao(9,centrodesaude,guimaraes).
 %-------- 4 - Extensão do Predicado que permite identificar utentes por id e nome,servico por id e consulta por id de servico e id de utente -----------------------------------------------
 
 
-idUtente(ID,R) :- solucoes((ID,N,I,C), utente(ID,N,I,C), R).
-nomeUtente(NOME,R) :- solucoes((ID,NOME,I,C),utente(ID,NOME,I,C),R).
+idUtente(ID,R) :-
+	solucoes((ID,N,I,C),
+	utente(ID,N,I,C), R).
 
-idServ(ID,R) :- solucoes((ID,SERV,INS,LOC),servico(ID,SERV,INS,LOC)).
+nomeUtente(NOME,R) :-
+	solucoes((ID,NOME,I,C),
+	utente(ID,NOME,I,C),R).
 
-servConsulta(ID,R) :- solucoes((DAT,UT,ID,C), consulta(DAT,UT,ID,C), R).
+idServ(ID,R) :-
+	solucoes((ID,SERV,INS,LOC),
+	servico(ID,SERV,INS,LOC)).
 
-utenteConsulta(ID,R) :- solucoes((DAT,ID,SER,C),consulta(DAT,ID,SER,C),R).
+servConsulta(ID,R) :-
+	solucoes((DAT,UT,ID,C),
+		consulta(DAT,UT,ID,C), R).
 
-%-------- 5 - Extensão do Predicado que permite Identificar serviços prestados por instituição/cidade/datas/custo --------------------------------------------------------------------------
+utenteConsulta(ID,R) :-
+	solucoes((DAT,ID,SER,C),
+	consulta(DAT,ID,SER,C),R).
 
-instServico(INSTITUICAO,R) :- solucoes((ID,DESC,INSTITUICAO,C),servico(ID,DESC,INSTITUICAO,C),R),remReps(R,RES).
+%-------- 5 - Extensão do Predicado que permite Identificar serviços prestados por instituição, cidade, datas, custo --------------------------------------------------------------------------
 
-cidadeServico(CIDADE,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),servico(ID,DESC,INSTITUICAO,CIDADE),R),remReps(R,RES).
+instServico(INSTITUICAO,R) :-
+	solucoes((ID,DESC,INSTITUICAO,C),
+	servico(ID,DESC,INSTITUICAO,C),R),
+	remReps(R,RES).
 
-dataServico(DAT,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,ID,C),servico(ID,DESC,INSTITUICAO,CIDADE)),R),remReps(R,RES).
+cidadeServico(CIDADE,R) :-
+	solucoes((ID,DESC,INSTITUICAO,CIDADE),
+	servico(ID,DESC,INSTITUICAO,CIDADE),R),
+	remReps(R,RES).
 
-custoServico(CUSTO,R) :- solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,ID,CUSTO),servico(ID,DESC,INSTITUICAO,CIDADE)),R),remReps(R,RES).
+dataServico(DAT,R) :-
+	solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,ID,C),
+	servico(ID,DESC,INSTITUICAO,CIDADE)),R),
+	remReps(R,RES).
 
-%-------- 6 - Extensão do Predicado que permite identificar os utentes de um serviço/instituição -------------------------------------------------------------------------------------------
+custoServico(CUSTO,R) :-
+	solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(DAT,UT,ID,CUSTO),
+	servico(ID,DESC,INSTITUICAO,CIDADE)),R),
+	remReps(R,RES).
 
-utenteServico(ID,R) :- solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),servico(ID,DESC,INSTITUICAO,CIDADEU),consulta(DAT,IDU,ID,C)),R),remReps(R,RES).
+%-------- 6 - Extensão do Predicado que permite identificar os utentes de um serviço, instituição -------------------------------------------------------------------------------------------
 
-utenteInstituicao(INSTITUICAO,R) :- solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),servico(ID,DESC,INSTITUICAO,CIDADEU),consulta(DAT,IDU,ID,C)),R),remReps(R,RES).
+utenteServico(ID,R) :-
+	solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),
+	servico(ID,DESC,INSTITUICAO,CIDADEU),
+	consulta(DAT,IDU,ID,C)),R),
+	remReps(R,RES).
+
+utenteInstituicao(INSTITUICAO,R) :-
+	solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),
+		servico(ID,DESC,INSTITUICAO,CIDADEU),
+		consulta(DAT,IDU,ID,C)),R),
+	remReps(R,RES).
 
 %-------- 7 - Extensão do Predicado que permite identificar serviços realizados por utente/instituição/cidade ------------------------------------------------------------------------------
 
-servicoUtente(IDU,R) :- solucoes((ID,DESC,INST,CID),(utente(IDUse,NOME,IDADE,CIDADE),servico(ID,DESC,INST,CID),consulta(DAT,IDU,ID,C)),R),remReps(R,RES).
+servicoUtente(IDU,R) :-
+	solucoes((ID,DESC,INST,CID),
+	(utente(IDUse,NOME,IDADE,CIDADE),
+		servico(ID,DESC,INST,CID),
+		consulta(DAT,IDU,ID,C)),R),
+	remReps(R,RES).
 
-servicoInstituicao(INSTITUICAO,R) :- solucoes((ID,DESC,INSTITUICAO,CID),(utente(IDU,NOME,IDADE,CIDADE),servico(ID,DESC,INSTITUICAO,CID),consulta(DAT,IDU,ID,C)),R),remReps(R,RES).
+servicoInstituicao(INSTITUICAO,R) :-
+	solucoes((ID,DESC,INSTITUICAO,CID),
+		(utente(IDU,NOME,IDADE,CIDADE),
+			servico(ID,DESC,INSTITUICAO,CID),
+			consulta(DAT,IDU,ID,C)),R),
+	remReps(R,RES).
 
-servicoCidade(CIDADE,R) :- solucoes((ID,DESC,INST,CIDADE),(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,C)),R),remReps(R,RES).
+servicoCidade(CIDADE,R) :-
+	solucoes((ID,DESC,INST,CIDADE),
+		(utente(IDU,NOME,IDADE,CID),
+			servico(ID,DESC,INST,CIDADE),
+			consulta(DAT,IDU,ID,C)),R),
+	remReps(R,RES).
 
-%-------- 8 - Extensão do Predicado que permite calcular o custo total dos cuidados de saúde por utente/serviço/instituição/data -----------------------------------------------------------
+%-------- 8 - Extensão do Predicado que permite calcular o custo total dos cuidados de saúde por utente, serviço, instituição edata -----------------------------------------------------------
 
-custoUtente(IDU,R) :- solucoes(Custo,(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,Custo)),R1),sum(R1,R).
+custoUtente(IDU,R) :-
+	solucoes(Custo,
+		(utente(IDU,NOME,IDADE,CID),
+			servico(ID,DESC,INST,CIDADE),
+			consulta(DAT,IDU,ID,Custo)),R1),
+	soma(R1,R).
 
-custoServico(IDS,R) :- solucoes(Custo,(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,Custo)),R1),sum(R1,R).
+custoServico(IDS,R) :-
+	solucoes(Custo,
+		(utente(IDU,NOME,IDADE,CID),
+			servico(ID,DESC,INST,CIDADE),
+			consulta(DAT,IDU,ID,Custo)),R1),
+	soma(R1,R).
 
-custoInstituicao(INST,R) :- solucoes(Custo,(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,Custo)),R1),sum(R1,R).
+custoInstituicao(INST,R) :-
+	solucoes(Custo,
+		(utente(IDU,NOME,IDADE,CID),
+			servico(ID,DESC,INST,CIDADE),
+			consulta(DAT,IDU,ID,Custo)),R1),
+	soma(R1,R).
 
-custoData(DAT,R) :- solucoes(Custo,(utente(IDU,NOME,IDADE,CID),servico(ID,DESC,INST,CIDADE),consulta(DAT,IDU,ID,Custo)),R1),sum(R1,R).
-
+custoData(DAT,R) :-
+	solucoes(Custo,
+		(utente(IDU,NOME,IDADE,CID),
+			servico(ID,DESC,INST,CIDADE),
+			consulta(DAT,IDU,ID,Custo)),R1),
+	soma(R1,R).
