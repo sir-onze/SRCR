@@ -155,6 +155,13 @@ consulta(9,02-02-18,31323,5,50).
 	N == 0
 ).
 
+%---------- Invariante Estrutural: não permite inserção de consultas com utentes ou serviços inexistentes --------------------------------------
+
++consulta(_,_,IDU,IDS,_) :: (
+	utente(IDU,_,_,_),
+	servico(IDS,_,_,_)
+).
+
 %--------------------------------------------------------------------------------------------
 % Extensao do predicado que permite a evolucao do conhecimento
 
