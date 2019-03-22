@@ -168,8 +168,6 @@ involucao(Termo) :-
 	remove(Termo),
 	teste(LInv).
 
-
-
 %---------- FUNCIONALIDADES -----------------------------------------------------------------
 
 %---------- 1-Extensão do Predicado que permite registar utentes, serviços e consultas ------
@@ -229,7 +227,7 @@ dataServico(DAT,R) :-
 	remReps(R,RES).
 
 % Identificar serviços por custo
-custoServico(CUSTO,R) :-
+custoSer(CUSTO,R) :-
 	solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(Id,DAT,UT,ID,CUSTO),
 	servico(ID,DESC,INSTITUICAO,CIDADE)),R),
 	remReps(R,RES).
@@ -240,14 +238,12 @@ custoServico(CUSTO,R) :-
 utenteServico(ID,R) :-
 	solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),
 	servico(ID,DESC,INSTITUICAO,CIDADEU),
-	consulta(DAT,IDU,ID,C)),R),
-	remReps(R,RES).
+	consulta(IDC,DAT,IDU,ID,C)),R).
 
 utenteInstituicao(INSTITUICAO,R) :-
 	solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),
 		servico(ID,DESC,INSTITUICAO,CIDADEU),
-		consulta(DAT,IDU,ID,C)),R),
-	remReps(R,RES).
+		consulta(IDC,DAT,IDU,ID,C)),R).
 
 %-------- 7 - Extensão do Predicado que permite identificar serviços realizados por utente/instituição/cidade ------------------------------------------------------------------------------
 
@@ -255,21 +251,20 @@ servicoUtente(IDU,R) :-
 	solucoes((ID,DESC,INST,CID),
 	(utente(IDUse,NOME,IDADE,CIDADE),
 		servico(ID,DESC,INST,CID),
-		consulta(DAT,IDU,ID,C)),R),
-	remReps(R,RES).
+		consulta(IDC,DAT,IDU,ID,C)),R).
 
 servicoInstituicao(INSTITUICAO,R) :-
 	solucoes((ID,DESC,INSTITUICAO,CID),
 		(utente(IDU,NOME,IDADE,CIDADE),
 			servico(ID,DESC,INSTITUICAO,CID),
-			consulta(DAT,IDU,ID,C)),R),
+			consulta(IDC,DAT,IDU,ID,C)),R),
 	remReps(R,RES).
 
 servicoCidade(CIDADE,R) :-
 	solucoes((ID,DESC,INST,CIDADE),
-		(utente(IDU,NOME,IDADE,CID),
-			servico(ID,DESC,INST,CIDADE),
-			consulta(DAT,IDU,ID,C)),R),
+		(servico(ID,DESC,INST,CIDADE),
+			utente(IDU,NOME,IDADE,CID),
+			consulta(IDC,DAT,IDU,ID,C)),R),
 	remReps(R,RES).
 
 %-------- 8 - Extensão do Predicado que permite calcular o custo total dos cuidados de saúde por utente, serviço, instituição edata -----------------------------------------------------------
@@ -278,26 +273,26 @@ custoUtente(IDU,R) :-
 	solucoes(Custo,
 		(utente(IDU,NOME,IDADE,CID),
 			servico(ID,DESC,INST,CIDADE),
-			consulta(DAT,IDU,ID,Custo)),R1),
+			consulta(IDC,DAT,IDU,ID,Custo)),R1),
 	soma(R1,R).
 
 custoServico(IDS,R) :-
 	solucoes(Custo,
 		(utente(IDU,NOME,IDADE,CID),
 			servico(ID,DESC,INST,CIDADE),
-			consulta(DAT,IDU,ID,Custo)),R1),
+			consulta(IDC,DAT,IDU,ID,Custo)),R1),
 	soma(R1,R).
 
 custoInstituicao(INST,R) :-
 	solucoes(Custo,
 		(utente(IDU,NOME,IDADE,CID),
 			servico(ID,DESC,INST,CIDADE),
-			consulta(DAT,IDU,ID,Custo)),R1),
+			consulta(IDC,DAT,IDU,ID,Custo)),R1),
 	soma(R1,R).
 
 custoData(DAT,R) :-
 	solucoes(Custo,
 		(utente(IDU,NOME,IDADE,CID),
 			servico(ID,DESC,INST,CIDADE),
-			consulta(DAT,IDU,ID,Custo)),R1),
+			consulta(IDC,DAT,IDU,ID,Custo)),R1),
 	soma(R1,R).
