@@ -67,7 +67,7 @@ utente(33345,paulotabuada,20,sintra).
 utente(51523,adrianodovitoria20,aveiro).
 utente(11,tiagotombado,22,braga).
 utente(8,ricardosquirtle,22,braga).
-utente(69,lucasblastoise,23,braga).
+utente(88,lucasblastoise,23,braga).
 
 %---------- Invariante Estrutural: não permite inserção de utentes duplicados ---------------
 
@@ -129,7 +129,7 @@ servico(15,urgencia,hospitalprivado,braga).
 %---------- Extensão do predicado consulta: IdC, Data, IdU, IdS, Custo ----------------------
 
 consulta(1,01-02-18,12345,1,50).
-consulta(2,20-03-19,69,5,69).
+consulta(2,20-03-19,88,5,70).
 consulta(3,12-02-18,12345,1,50).
 consulta(4,22-05-18,12345,7,50).
 consulta(5,25-06-18,12345,15,50).
