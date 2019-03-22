@@ -238,7 +238,7 @@ nomeUtente(NOME,S) :-
 	utente(IDU,NOME,IDADE,CID),S).
 
 % Identificar serviço por id
-idServ(IDS,S) :- 
+idServico(IDS,S) :- 
 	solucoes((IDS,DESC,INST,CID), 
 	servico(IDS,DESC,INST,CID),S).
 
@@ -273,7 +273,7 @@ dataServico(DAT,R) :-
 	remReps(RES,R).
 
 % Identificar serviços por custo
-custoSer(CUSTO,R) :-
+custoServico(CUSTO,R) :-
 	solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(Id,DAT,UT,ID,CUSTO),
 	servico(ID,DESC,INSTITUICAO,CIDADE)),RES),
 	remReps(RES,R).
