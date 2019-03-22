@@ -33,12 +33,21 @@ comprimento([H|T],R) :- comprimento(T,Y), R is 1+Y.
 soma([],0).
 soma([H|T],R) :- soma(T,Y),R is Y+H.
 
-remOne(X,[],[]).
-remOne(X,[X|XS],XS).
-remOne(X,[Q|XS],[Y|YS]) :- remOne(X,XS,YS).
+nao(Q) :- Q, !, fail.
+nao(Q).
+
+pertence(H,[H|T]).
+pertence(X,[H|T]) :-
+	X \= H,
+pertence(X,T).
 
 remReps([],[]).
-remReps([H|T],[Y|YS]) :- remOne(H,T,R), remReps(R,YS).
+remReps([H|T], R) :-
+	pertence(H,T),
+	remReps(T,R).
+remReps([H|T],[H|R]) :-
+	nao(pertence(H,T)),
+remReps(T,R).
 
 solucoes(T,Q,S) :- findall(T, Q, S).
 
@@ -171,10 +180,16 @@ involucao(Termo) :-
 %---------- FUNCIONALIDADES -----------------------------------------------------------------
 
 %---------- 1-Extensão do Predicado que permite registar utentes, serviços e consultas ------
-%---------- Evolução -----------------------------------------------------------------------
+
+registaU(ID,NOME,IDADE,CIDADE) :- evolucao(utente(ID,NOME,IDADE,CIDADE)).
+registaS(ID,DESC,INST,CIDADE) :- evolucao(servico(ID,DESC,INST,CIDADE)).
+registaC(ID,DAT,IDU,IDS,Custo) :- evolucao(consulta(ID,DAT,IDU,IDS,Custo)).
 
 %---------- 2-Extensão do Predicado que permite eliminar utentes, serviços e consultas ------
-%---------- Involução -----------------------------------------------------------------------
+
+eliminaU(ID,NOME,IDADE,CIDADE) :- involucao(utente(ID,NOME,IDADE,CIDADE)).
+eliminaS(ID,DESC,INST,CIDADE) :- involucao(servico(ID,DESC,INST,CIDADE)).
+eliminaC(ID,DAT,IDU,IDS,Custo) :- involucao(consulta(ID,DAT,IDU,IDS,Custo)).
 
 %---------- 3-Extensão do Predicado que permite identificar todas as Instituições prestadoras
 %----------   de servico --------------------------------------------------------------------
@@ -217,20 +232,20 @@ instServico(I, S) :- solucoes((Id, D, I, C), servico(Id, D, I, C), S), remReps(S
 % Identificar serviços por cidade
 cidadeServico(CIDADE, R) :-
 	solucoes((ID,DESC,INSTITUICAO,CIDADE),
-	servico(ID,DESC,INSTITUICAO,CIDADE),R),
-	remReps(R,RES).
+	servico(ID,DESC,INSTITUICAO,CIDADE),RES),
+	remReps(RES,R).
 
 % Identificar serviços por data
 dataServico(DAT,R) :-
 	solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(Id, DAT,UT,ID,C),
-	servico(ID,DESC,INSTITUICAO,CIDADE)), R),
-	remReps(R,RES).
+	servico(ID,DESC,INSTITUICAO,CIDADE)), RES),
+	remReps(RES,R).
 
 % Identificar serviços por custo
 custoSer(CUSTO,R) :-
 	solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(Id,DAT,UT,ID,CUSTO),
-	servico(ID,DESC,INSTITUICAO,CIDADE)),R),
-	remReps(R,RES).
+	servico(ID,DESC,INSTITUICAO,CIDADE)),RES),
+	remReps(RES,R).
 
 %-------- 6 - Extensão do Predicado que permite identificar os utentes de um serviço, instituição -------------------------------------------------------------------------------------------
 
@@ -251,21 +266,22 @@ servicoUtente(IDU,R) :-
 	solucoes((ID,DESC,INST,CID),
 	(utente(IDUse,NOME,IDADE,CIDADE),
 		servico(ID,DESC,INST,CID),
-		consulta(IDC,DAT,IDU,ID,C)),R).
+		consulta(IDC,DAT,IDU,ID,C)),R),
+	remReps(RES,R).
 
 servicoInstituicao(INSTITUICAO,R) :-
 	solucoes((ID,DESC,INSTITUICAO,CID),
 		(utente(IDU,NOME,IDADE,CIDADE),
 			servico(ID,DESC,INSTITUICAO,CID),
-			consulta(IDC,DAT,IDU,ID,C)),R),
-	remReps(R,RES).
+			consulta(IDC,DAT,IDU,ID,C)),RES),
+	remReps(RES,R).
 
 servicoCidade(CIDADE,R) :-
 	solucoes((ID,DESC,INST,CIDADE),
 		(servico(ID,DESC,INST,CIDADE),
 			utente(IDU,NOME,IDADE,CID),
-			consulta(IDC,DAT,IDU,ID,C)),R),
-	remReps(R,RES).
+			consulta(IDC,DAT,IDU,ID,C)),RES),
+	remReps(RES,R).
 
 %-------- 8 - Extensão do Predicado que permite calcular o custo total dos cuidados de saúde por utente, serviço, instituição edata -----------------------------------------------------------
 
