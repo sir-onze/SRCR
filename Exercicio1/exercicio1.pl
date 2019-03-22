@@ -14,7 +14,7 @@
 % - Definicoes iniciais de entidades presentes na base de conhecimento:
 %utente: IdUt, Nome, Idade, Cidade -> {V,F}
 %servico: IdServ, Descrição, Instituição, Cidade -> {V,F}
-%consulta: Data, IdUt, IdServ, Custo -> {V,F}
+%consulta: IdCons, Data, IdUt, IdServ, Custo -> {V,F}
 
 % - Opções para permitirem inserções e remoções na base de conhecimento
 
