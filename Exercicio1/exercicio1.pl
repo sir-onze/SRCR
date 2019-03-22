@@ -8,6 +8,7 @@
 :- set_prolog_flag( discontiguous_warnings,off ).
 :- set_prolog_flag( single_var_warnings,off ).
 :- set_prolog_flag( unknown,fail ).
+:- set_prolog_flag(answer_write_options,[max_depth(0)]).
 :- op(900,xfy,'::').
 
 % - Definicoes iniciais de entidades presentes na base de conhecimento:
@@ -181,15 +182,25 @@ involucao(Termo) :-
 
 %---------- 1-Extensão do Predicado que permite registar utentes, serviços e consultas ------
 
-registaU(ID,NOME,IDADE,CIDADE) :- evolucao(utente(ID,NOME,IDADE,CIDADE)).
-registaS(ID,DESC,INST,CIDADE) :- evolucao(servico(ID,DESC,INST,CIDADE)).
-registaC(ID,DAT,IDU,IDS,Custo) :- evolucao(consulta(ID,DAT,IDU,IDS,Custo)).
+registaU(ID,NOME,IDADE,CIDADE) :- 
+	evolucao(utente(ID,NOME,IDADE,CIDADE)).
+
+registaS(ID,DESC,INST,CIDADE) :- 
+	evolucao(servico(ID,DESC,INST,CIDADE)).
+
+registaC(ID,DAT,IDU,IDS,Custo) :- 
+	evolucao(consulta(ID,DAT,IDU,IDS,Custo)).
 
 %---------- 2-Extensão do Predicado que permite eliminar utentes, serviços e consultas ------
 
-eliminaU(ID,NOME,IDADE,CIDADE) :- involucao(utente(ID,NOME,IDADE,CIDADE)).
-eliminaS(ID,DESC,INST,CIDADE) :- involucao(servico(ID,DESC,INST,CIDADE)).
-eliminaC(ID,DAT,IDU,IDS,Custo) :- involucao(consulta(ID,DAT,IDU,IDS,Custo)).
+eliminaU(ID,NOME,IDADE,CIDADE) :- 
+	involucao(utente(ID,NOME,IDADE,CIDADE)).
+
+eliminaS(ID,DESC,INST,CIDADE) :- 
+	involucao(servico(ID,DESC,INST,CIDADE)).
+
+eliminaC(ID,DAT,IDU,IDS,Custo) :- 
+	involucao(consulta(ID,DAT,IDU,IDS,Custo)).
 
 %---------- 3-Extensão do Predicado que permite identificar todas as Instituições prestadoras
 %----------   de servico --------------------------------------------------------------------
@@ -210,24 +221,37 @@ instituicao(9,centrodesaude,guimaraes).
 %--------   id e consulta por id de servico e id de utente --------------------------------
 
 % Identificar utente por id
-idUtente(Id, S) :- solucoes((Id, N, I, C), utente(Id, N, I, C), S).
+idUtente(IDU,S) :- 
+	solucoes((IDU,NOME,IDADE,CID), 
+	utente(IDU,NOME,IDADE,CID),S).
 
 % Identificar utente por nome
-nomeUtente(Nome, S) :- solucoes((Id, Nome, I, C), utente(Id, Nome, I, C), S).
+nomeUtente(NOME,S) :- 
+	solucoes((IDU,NOME,IDADE,CID), 
+	utente(IDU,NOME,IDADE,CID),S).
 
 % Identificar serviço por id
-idServ(Id, S) :- solucoes((Id, D, I, C), servico(Id, D, I, C),S).
+idServ(IDS,S) :- 
+	solucoes((IDS,DESC,INST,CID), 
+	servico(IDS,DESC,INST,CID),S).
 
 % Identificar consultas por serviço
-servConsulta(Id, S) :- solucoes((I, D, Id, SE, C), consulta(I, D, Id, SE, C), S).
+servConsulta(IDS,S) :- 
+	solucoes((IDC,DAT,IDU,IDS,CUS), 
+	consulta(IDC,DAT,IDU,IDS,CUS),S).
 
 % Identificar consultas de um utente
-utenteConsulta(Id, S) :- solucoes((I, D, Id, SE, C), consulta(I, D, Id, SE, C), S).
+utenteConsulta(IDU,S) :- 
+	solucoes((IDC,DAT,IDU,IDS,CUS), 
+	consulta(IDC,DAT,IDU,IDS,CUS),S).
 
 %-------- 5 - Extensão do Predicado que permite Identificar serviços prestados por instituição, cidade, datas, custo --------------------------------------------------------------------------
 
 % Identificar serviços efetuados por uma instituição
-instServico(I, S) :- solucoes((Id, D, I, C), servico(Id, D, I, C), S), remReps(S, R).
+instServico(INST, R) :- 
+	solucoes((IDS, DESC, INST, CID), 
+	servico(IDS, DESC, INST, CID), S), 
+	remReps(S, R).
 
 % Identificar serviços por cidade
 cidadeServico(CIDADE, R) :-
