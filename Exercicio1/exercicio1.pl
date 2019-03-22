@@ -264,9 +264,9 @@ utenteInstituicao(INSTITUICAO,R) :-
 
 servicoUtente(IDU,R) :-
 	solucoes((ID,DESC,INST,CID),
-	(utente(IDUse,NOME,IDADE,CIDADE),
+	(utente(IDU,NOME,IDADE,CIDADE),
 		servico(ID,DESC,INST,CID),
-		consulta(IDC,DAT,IDU,ID,C)),R),
+		consulta(IDC,DAT,IDU,ID,C)),RES),
 	remReps(RES,R).
 
 servicoInstituicao(INSTITUICAO,R) :-
