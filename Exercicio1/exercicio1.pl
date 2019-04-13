@@ -8,7 +8,6 @@
 :- set_prolog_flag( discontiguous_warnings,off ).
 :- set_prolog_flag( single_var_warnings,off ).
 :- set_prolog_flag( unknown,fail ).
-:- set_prolog_flag(answer_write_options,[max_depth(0)]).
 :- op(900,xfy,'::').
 
 % - Definicoes iniciais de entidades presentes na base de conhecimento:
