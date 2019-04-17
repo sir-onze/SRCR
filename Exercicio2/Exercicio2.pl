@@ -2,8 +2,8 @@
 % SIST. REPR. CONHECIMENTO E RACIOCINIO - MiEI/3 - EXERCICIO 2
 %
 %	Tiago Baptista  - A75328
-%	Ricardo Pereira - A
-%	Lucas Pereira	- A
+%	Ricardo Pereira - A73577
+%	Lucas Pereira	- A68547
 %
 %----------------------------------------------------------------------------------------------
 % - Configurações iniciais
@@ -24,6 +24,14 @@
 :- dynamic servico/4.
 :- dynamic consulta/5.
 :- dynamic instituicao/3.
+
+%---------- Extensão do meta-predicado demo: Questao, Resposta -> {V, F, D}
+
+demo(Predicado,verdadeiro) :- Predicado.
+demo(Predicado, falso) :- -Predicado.
+demo(Predicado, desconhecido) :-
+	nao(Predicado),
+	nao(-Predicado).
 
 %---------- Predicados auxiliares -----------------------------------------------------------
 
@@ -71,6 +79,7 @@ utente(51523,adrianodovitoria20,aveiro).
 utente(11,tiagotombado,22,braga).
 utente(8,ricardosquirtle,22,braga).
 utente(88,lucasblastoise,23,braga).
+
 %---------- Invariante Estrutural: não permite inserção de utentes duplicados ---------------
 
 +utente(IdU,_,_,_) :: (
@@ -128,6 +137,15 @@ servico(15,urgencia,hospitalprivado,braga).
 	N == 0
 ).
 
+%---------- Invariante Estrutural: não permite remover um serviço com atos associados -----(PARTE II)-----------
+
+-servico(IDS,_,_,_) :: (
+	solucoes(IDS,consulta(_,_,_,IDS,_),L),
+	comprimento(L,N),
+	N == 0
+).
+
+
 %---------- Extensão do predicado consulta: IdC, Data, IdU, IdS, Custo ----------------------
 
 consulta(1,01-02-18,12345,1,50).
@@ -156,11 +174,19 @@ consulta(9,02-02-18,31323,5,50).
 	N == 0
 ).
 
-%---------- Invariante Estrutural: não permite inserção de consultas com utentes ou serviços inexistentes --------------------------------------
+%---------- Invariante Estrutural: não permite inserção de consultas com utentes ou serviços inexistentes --------
 
 +consulta(_,_,IDU,IDS,_) :: (
 	utente(IDU,_,_,_),
 	servico(IDS,_,_,_)
+).
+
+%---------- Invariante Estrutural: não permite remoção de consultas com utentes associados (PARTE II)-------
+
+-consulta(_,_,IDU,_,_) :: (
+	solucoes(IDU, utente(IDU,_,_,_),L),
+	comprimento(L,N),
+	N == 0
 ).
 
 %--------------------------------------------------------------------------------------------
@@ -224,8 +250,71 @@ instituicao(7,hospitalprivado,braga).
 instituicao(8,centrodesaude,braga).
 instituicao(9,centrodesaude,guimaraes).
 
+
+%--------------------------------------------------------------------------------------------
+%---------- Conhecimento Incerto --------------(PARTE II)---------------------------------------------
+
+%-------------- Utente ------------------
+excecao(utente(ID,nome_deconhecido,IDADE,CIDADE)) :-
+	utente(ID,nome_deconhecido,IDADE,CIDADE).
+
+excecao(utente(ID,NOME,_,CIDADE)) :-
+	utente(ID,NOME,idade_desconhecida,CIDADE).
+
+excecao(utente(ID,NOME,IDADE,_)) :-
+	utente(ID,NOME,IDADE,cidade_desconhecida).
+
+excecao(utente(ID,_,_,_)) :-
+	utente(ID,nome_deconhecido,idade_desconhecida,cidade_desconhecida).
+
+excecao(utente(ID,NOME,_,_)) :-
+	utente(ID,NOME,idade_desconhecida,cidade_desconhecida).
+
+excecao(utente(ID,_,IDADE,_)) :-
+	utente(ID,nome_deconhecido,IDADE,cidade_desconhecida).
+
+excecao(utente(ID,_,_,CIDADE)) :-
+	utente(ID,nome_deconhecido,idade_desconhecida,CIDADE).
+
+
+%-------------- Consulta ------------------
+
+excecao(consulta(IDC,_,IDU,IDS,CUSTO)) :-
+	consulta(IDC,data_desconhecida,IDU,IDS,CUSTO).
+
+excecao(consulta(IDC,DATA,IDU, _,CUSTO)) :-
+	consulta(IDC,DATA,IDU,servico_desconhecido,CUSTO).
+
+excecao(consulta(IDC,DATA,IDU,IDS,_)) :-
+	consulta(IDC,DATA,IDU,IDS,custo_desconhecido).
+
+excecao(consulta(IDC,_,IDU,IDS,_)) :-
+	consulta(IDC,data_desconhecida,IDU,IDS,custo_desconhecido).
+
+
+%-------------- Serviço ------------------
+
+excecao(servico(IDS,_,INST,CIDADE)) :-
+	servico(IDS,descricao_desconhecida,INST,CIDADE).
+
+excecao(servico(IDS,DESC,_,CIDADE)) :-
+	servico(IDS,DESC,instituicao_desconhecida,CIDADE).
+
+excecao(servico(IDS,DESC,INST,_)) :-
+	servico(IDS,DESC,INST,cidade_desconhecida).
+
+excecao(servico(IDS,DESC,_,_)) :-
+	servico(IDS,DESC,instituicao_desconhecida,cidade_desconhecida).	
+
+%-------------- Instituição ------------------
+
+excecao(instituicao(IDI,NOME,_)) :-
+	instituicao(IDI,NOME,cidade_desconhecida).
+
 %--------------------------------------------------------------------------------------------
 %---------- Conhecimento Negativo -----------------------------------------------------------
+
+
 
 
 
