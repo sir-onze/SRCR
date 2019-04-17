@@ -1,9 +1,6 @@
 %%---------------------------------------------------------------------------------------------
-% SIST. REPR. CONHECIMENTO E RACIOCINIO - MiEI/3 - EXERCICIO 2
+% SIST. REPR. CONHECIMENTO E RACIOCINIO - MiEI/3 - EXERCICIO 1
 %
-%	Tiago Baptista  - A75328
-%	Ricardo Pereira - A73577
-%	Lucas Pereira	- A68547
 %
 %----------------------------------------------------------------------------------------------
 % - Configurações iniciais
@@ -11,6 +8,7 @@
 :- set_prolog_flag( discontiguous_warnings,off ).
 :- set_prolog_flag( single_var_warnings,off ).
 :- set_prolog_flag( unknown,fail ).
+:- set_prolog_flag(answer_write_options,[max_depth(0)]).
 :- op(900,xfy,'::').
 
 % - Definicoes iniciais de entidades presentes na base de conhecimento:
@@ -25,7 +23,7 @@
 :- dynamic consulta/5.
 :- dynamic instituicao/3.
 
-%---------- Extensão do meta-predicado demo: Questao, Resposta -> {V, F, D}
+%---------- Extensão do meta-predicado demo: Questao, Resposta -> {V, F, D} ---(PARTE II)------
 
 demo(Predicado,verdadeiro) :- Predicado.
 demo(Predicado, falso) :- -Predicado.
@@ -145,7 +143,6 @@ servico(15,urgencia,hospitalprivado,braga).
 	N == 0
 ).
 
-
 %---------- Extensão do predicado consulta: IdC, Data, IdU, IdS, Custo ----------------------
 
 consulta(1,01-02-18,12345,1,50).
@@ -174,7 +171,7 @@ consulta(9,02-02-18,31323,5,50).
 	N == 0
 ).
 
-%---------- Invariante Estrutural: não permite inserção de consultas com utentes ou serviços inexistentes --------
+%---------- Invariante Estrutural: não permite inserção de consultas com utentes ou serviços inexistentes --------------------------------------
 
 +consulta(_,_,IDU,IDS,_) :: (
 	utente(IDU,_,_,_),
@@ -212,8 +209,9 @@ involucao(Termo) :-
 	remove(Termo),
 	teste(LInv).
 
-%--------------------------------------------------------------------------------------------
-%---------- Extensão do Predicado que permite registar utentes, serviços e consultas ------
+%---------- FUNCIONALIDADES -----------------------------------------------------------------
+
+%---------- 1-Extensão do Predicado que permite registar utentes, serviços e consultas ------
 
 registaU(ID,NOME,IDADE,CIDADE) :- 
 	evolucao(utente(ID,NOME,IDADE,CIDADE)).
@@ -224,8 +222,7 @@ registaS(ID,DESC,INST,CIDADE) :-
 registaC(ID,DAT,IDU,IDS,Custo) :- 
 	evolucao(consulta(ID,DAT,IDU,IDS,Custo)).
 
-%--------------------------------------------------------------------------------------------
-%---------- Extensão do Predicado que permite eliminar utentes, serviços e consultas ------
+%---------- 2-Extensão do Predicado que permite eliminar utentes, serviços e consultas ------
 
 eliminaU(ID,NOME,IDADE,CIDADE) :- 
 	involucao(utente(ID,NOME,IDADE,CIDADE)).
@@ -236,7 +233,7 @@ eliminaS(ID,DESC,INST,CIDADE) :-
 eliminaC(ID,DAT,IDU,IDS,Custo) :- 
 	involucao(consulta(ID,DAT,IDU,IDS,Custo)).
 
-%---------- Extensão do Predicado que permite identificar todas as Instituições prestadoras
+%---------- 3-Extensão do Predicado que permite identificar todas as Instituições prestadoras
 %----------   de servico --------------------------------------------------------------------
 %----------   instituicao : idInst, Nome, Cidade -> {V,F}
 
@@ -251,11 +248,132 @@ instituicao(8,centrodesaude,braga).
 instituicao(9,centrodesaude,guimaraes).
 
 
+%-------- 4-Extensão do Predicado que permite identificar utentes por id e nome,servico por
+%--------   id e consulta por id de servico e id de utente --------------------------------
+
+% Identificar utente por id
+idUtente(IDU,S) :- 
+	solucoes((IDU,NOME,IDADE,CID), 
+	utente(IDU,NOME,IDADE,CID),S).
+
+% Identificar utente por nome
+nomeUtente(NOME,S) :- 
+	solucoes((IDU,NOME,IDADE,CID), 
+	utente(IDU,NOME,IDADE,CID),S).
+
+% Identificar serviço por id
+idServico(IDS,S) :- 
+	solucoes((IDS,DESC,INST,CID), 
+	servico(IDS,DESC,INST,CID),S).
+
+% Identificar consultas por serviço
+servConsulta(IDS,S) :- 
+	solucoes((IDC,DAT,IDU,IDS,CUS), 
+	consulta(IDC,DAT,IDU,IDS,CUS),S).
+
+% Identificar consultas de um utente
+utenteConsulta(IDU,S) :- 
+	solucoes((IDC,DAT,IDU,IDS,CUS), 
+	consulta(IDC,DAT,IDU,IDS,CUS),S).
+
+%-------- 5 - Extensão do Predicado que permite Identificar serviços prestados por instituição, cidade, datas, custo --------------------------------------------------------------------------
+
+% Identificar serviços efetuados por uma instituição
+instServico(INST, R) :- 
+	solucoes((IDS, DESC, INST, CID), 
+	servico(IDS, DESC, INST, CID), S), 
+	remReps(S, R).
+
+% Identificar serviços por cidade
+cidadeServico(CIDADE, R) :-
+	solucoes((ID,DESC,INSTITUICAO,CIDADE),
+	servico(ID,DESC,INSTITUICAO,CIDADE),RES),
+	remReps(RES,R).
+
+% Identificar serviços por data
+dataServico(DAT,R) :-
+	solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(Id, DAT,UT,ID,C),
+	servico(ID,DESC,INSTITUICAO,CIDADE)), RES),
+	remReps(RES,R).
+
+% Identificar serviços por custo
+custoServico(CUSTO,R) :-
+	solucoes((ID,DESC,INSTITUICAO,CIDADE),(consulta(Id,DAT,UT,ID,CUSTO),
+	servico(ID,DESC,INSTITUICAO,CIDADE)),RES),
+	remReps(RES,R).
+
+%-------- 6 - Extensão do Predicado que permite identificar os utentes de um serviço, instituição -------------------------------------------------------------------------------------------
+
+% 
+utenteServico(ID,R) :-
+	solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),
+	servico(ID,DESC,INSTITUICAO,CIDADEU),
+	consulta(IDC,DAT,IDU,ID,C)),R).
+
+utenteInstituicao(INSTITUICAO,R) :-
+	solucoes((IDU, NOME, IDADE, CIDADE),(utente(IDU,NOME,IDADE,CIDADE),
+		servico(ID,DESC,INSTITUICAO,CIDADEU),
+		consulta(IDC,DAT,IDU,ID,C)),R).
+
+%-------- 7 - Extensão do Predicado que permite identificar serviços realizados por utente/instituição/cidade ------------------------------------------------------------------------------
+
+servicoUtente(IDU,R) :-
+	solucoes((ID,DESC,INST,CID),
+	(utente(IDU,NOME,IDADE,CIDADE),
+		servico(ID,DESC,INST,CID),
+		consulta(IDC,DAT,IDU,ID,C)),RES),
+	remReps(RES,R).
+
+servicoInstituicao(INSTITUICAO,R) :-
+	solucoes((ID,DESC,INSTITUICAO,CID),
+		(utente(IDU,NOME,IDADE,CIDADE),
+			servico(ID,DESC,INSTITUICAO,CID),
+			consulta(IDC,DAT,IDU,ID,C)),RES),
+	remReps(RES,R).
+
+servicoCidade(CIDADE,R) :-
+	solucoes((ID,DESC,INST,CIDADE),
+		(servico(ID,DESC,INST,CIDADE),
+			utente(IDU,NOME,IDADE,CID),
+			consulta(IDC,DAT,IDU,ID,C)),RES),
+	remReps(RES,R).
+
+%-------- 8 - Extensão do Predicado que permite calcular o custo total dos cuidados de saúde por utente, serviço, instituição edata -----------------------------------------------------------
+
+custoUtente(IDU,R) :-
+	solucoes(Custo,
+		(utente(IDU,NOME,IDADE,CID),
+			servico(ID,DESC,INST,CIDADE),
+			consulta(IDC,DAT,IDU,ID,Custo)),R1),
+	soma(R1,R).
+
+custoServico(IDS,R) :-
+	solucoes(Custo,
+		(utente(IDU,NOME,IDADE,CID),
+			servico(ID,DESC,INST,CIDADE),
+			consulta(IDC,DAT,IDU,ID,Custo)),R1),
+	soma(R1,R).
+
+custoInstituicao(INST,R) :-
+	solucoes(Custo,
+		(utente(IDU,NOME,IDADE,CID),
+			servico(ID,DESC,INST,CIDADE),
+			consulta(IDC,DAT,IDU,ID,Custo)),R1),
+	soma(R1,R).
+
+custoData(DAT,R) :-
+	solucoes(Custo,
+		(utente(IDU,NOME,IDADE,CID),
+			servico(ID,DESC,INST,CIDADE),
+			consulta(IDC,DAT,IDU,ID,Custo)),R1),
+	soma(R1,R).
+
+
 %--------------------------------------------------------------------------------------------
 %---------- Conhecimento Incerto --------------(PARTE II)---------------------------------------------
 
 %-------------- Utente ------------------
-excecao(utente(ID,nome_deconhecido,IDADE,CIDADE)) :-
+excecao(utente(ID,_,IDADE,CIDADE)) :-
 	utente(ID,nome_deconhecido,IDADE,CIDADE).
 
 excecao(utente(ID,NOME,_,CIDADE)) :-
@@ -312,19 +430,85 @@ excecao(instituicao(IDI,NOME,_)) :-
 	instituicao(IDI,NOME,cidade_desconhecida).
 
 %--------------------------------------------------------------------------------------------
-%---------- Conhecimento Negativo -----------------------------------------------------------
+%---------- Conhecimento Negativo -------------(PARTE II)----------------------------------------------
+
+-utente(ID,NOME,IDADE,CIDADE) :-
+	nao(utente(ID,NOME,IDADE,CIDADE)),
+	nao(excecao(utente(ID,NOME,IDADE,CIDADE))).
+
+-consulta(IDC,DATA,IDU,IDS,CUSTO) :-
+	nao(consulta(IDC,DATA,IDU,IDS,CUSTO)),
+	nao(excecao(consulta(IDC,DATA,IDU,IDS,CUSTO))).
+
+-servico(IDS,DESC,INST,CIDADE) :-
+	nao(servico(IDS,DESC,INST,CIDADE)),
+	nao(excecao(servico(IDS,DESC,INST,CIDADE))).
+
+-instituicao(IDI,NOME,CIDADE) :-
+	nao(instituicao(IDI,NOME,CIDADE)),
+	nao(excecao(instituicao(IDI,NOME,CIDADE))).
 
 
+% um utente tem idade desconhecida, mas de certeza diferente de 5
+utente(234,vitinho,idade_desconhecida,guimaraes).
+-utente(234,vitinho,5,guimaraes).
 
+% uma consulta tem um custo desconhecido que de certeza não está entre 0 e 10
+consulta(55,08-08-08,11,12,custo_desconhecido).
+-consulta(55,08-08-08,11,12,C) :- 
+	C >= 0,
+	C =< 10.
 
+% esta linha serve apenas para anular o carater que o editor reconhece como comentario >
+
+% um servico foi realizado numa instituicao desconhecida que de certo não foi um centro de saude
+servico(20,ortopedia,instituicao_desconhecida,braga).
+-servico(20,ortopedia,centrodesaude,braga).
+
+% existe uma instituicao cuja cidade é desconhecida e que de certo nao é o porto
+instituicao(15,enfermaria,cidade_desconhecida).
+-instituicao(15,enfermaria,porto).
 
 %--------------------------------------------------------------------------------------------
-%---------- Conhecimento Imperfeito -----------------------------------------------------------
+%---------- Conhecimento Interdito ------------(PARTE II)-----------------------------------------------
 
+% utente 4444 tem cidade que ninguém pode conhecer
+utente(4444,marcelino,15,cidade_desconhecida).
+%excecao(utente(IDU,NOME,IDADE,CIDADE)) :- utente(IDU,NOME,IDADE,cidade_desconhecida).
+nulo(cidade_desconhecida).
++utente(4444,marcelino,15,cidade_desconhecida) :: (
+	solucoes(
+		(4444,marcelino,15,cidade_desconhecida),
+		(utente(4444,marcelino,15,CIDADE),nao(nulo(CIDADE))),
+		S),
+	comprimento(S,N),
+	N == 0).
 
+% utente 5551 tem idade que ninguém pode conhecer
+utente(5551,marcela,idade_desconhecida,evora).
+%excecao(utente(IDU,NOME,IDADE,CIDADE)) :- utente(IDU,NOME,idade_desconhecida,CIDADE).
+nulo(idade_desconhecida).
++utente(5551,marcela,idade_desconhecida,evora) :: (
+	solucoes(
+		(5551,marcela,idade_desconhecida,evora),
+		(utente(5551,marcela,IDADE,evora),nao(nulo(IDADE))),
+		S),
+	comprimento(S,N),
+	N == 0).
 
+% consulta 5050 tem utente que ninguém pode conhecer
+consulta(5050,11-11-11,utente_desconhecido,1,20).
+%excecao(consulta(IDC,DATA,IDU,IDS,CUSTO)) :- consulta(IDC,DATA,utente_desconhecido,IDS,CUSTO).
+nulo(utente_desconhecido).
++consulta(IDC,DATA,IDU,IDS,CUSTO) :: (
+	solucoes(
+		(IDC,DATA,IDU,IDS,CUSTO), 
+		(consulta(5050,11-11-11,IDU,1,20), nao(nulo(IDU))),
+		S),
+	comprimento(S,N),
+	N == 0). 
 
-
-
+%--------------------------------------------------------------------------------------------
+%---------- Conhecimento Impreciso ----------(PARTE II)-------------------------------------------------
 
 
