@@ -568,7 +568,7 @@ substituir_utente_nome(IDU,NOME) :- solucoes_utente(IDU,utente(IDU,N,I,M)),
 
 
 substituir_consulta_servico(IDC,SERVICO) :- solucoes_consulta(IDC,consulta(IDC,D,U,S,C)),
-										substitui(consulta(IDC,D,U,S,C),consulta(IDC,D,U,SERVICO,C)).
+										    substitui(consulta(IDC,D,U,S,C),consulta(IDC,D,U,SERVICO,C)).
 
 substituir_consulta_custo(IDC,CUSTO) :- solucoes_consulta(IDC,consulta(IDC,D,U,S,C)),
 										substitui(consulta(IDC,D,U,S,C),consulta(IDC,D,U,S,CUSTO)).
@@ -583,15 +583,14 @@ substituir_servico_cidade(IDS,CIDADE) :- solucoes_servico(IDS,servico(IDS,D,I,C)
 										 substitui(servico(IDS,D,I,C),servico(IDS,D,INSTITUICAO,CIDADE)).
 
 
-
 %-----------------------------------------(PARTE II)-----------------------------------------
 %---------------------------------- Funcionalidades Extra -----------------------------------
 %--------------------------------------------------------------------------------------------
 
 %-------------------- Predicado que permite identificar um utente dado um id ----------------
 
-% NOTA: o resultado é guardado como elemento de uma lista para que depois possa chamar o predicado 
-% com utente,de outra maneira o prolog ficava à espera de uma lista.
+% NOTA: o resultado é guardado como elemento de uma lista para que depois possa chamar o 
+% predicado com utente,de outra maneira o prolog ficava à espera de uma lista.
 
 solucoes_utente(IDU,R) :- solucoes(utente(IDU,N,I,C),utente(IDU,N,I,C),[R|_]).
 
@@ -603,5 +602,7 @@ solucoes_consulta(IDC,R) :- solucoes(consulta(IDC,D,U,S,C),consulta(IDC,D,U,S,C)
 
 solucoes_servico(IDS,R) :- solucoes(servico(IDS,D,I,C),servico(IDS,D,I,C),[R|_]).
 
-%servico: IdServ, Descrição, Instituição, Cidade -> {V,F}
+%-------------------- Predicado que permite identificar o numero de consultas efetuadas por um
+% dado servico -------------------------------------------------------------------------------
 
+total_consultas(IDS,R) :- solucoes((IDC,D,U,IDS,C),(servico(IDS,DS,I,CS),consulta(IDC,D,U,IDS,C)),S),comprimento(S,R).
