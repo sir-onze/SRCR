@@ -9,6 +9,10 @@
 :- set_prolog_flag( single_var_warnings,off ).
 :- set_prolog_flag( unknown,fail ).
 :- op(900,xfy,'::').
+:- op(996, xfy, '&&' ).  % operador de conjuncao
+:- op(997, xfy, '$$' ).  % operador de disjuncao 
+:- op(998, xfx, '=>' ).  % operador de implicacao 
+:- op(999, xfx, '<=>' ). % operador de equivalencia
 
 % - Definicoes iniciais de entidades presentes na base de conhecimento:
 %utente: IdUt, Nome, Idade, Cidade -> {V,F}
@@ -21,6 +25,41 @@
 :- dynamic servico/4.
 :- dynamic consulta/5.
 :- dynamic instituicao/3.
+
+%---------- Predicados lógicos -----------------------(PARTE II)-------------------------------
+
+equivalencia( X, X, verdadeiro ) :- X \= desconhecido.
+equivalencia( desconhecido, Y, desconhecido ).
+equivalencia( X, desconhecido, desconhecido ).
+equivalencia( verdadeiro, falso, falso ). 
+equivalencia( verdadeiro, falso, falso ). 
+
+implicacao( falso, X, verdadeiro ).
+implicacao( X, verdadeiro, verdadeiro ).
+implicacao( verdadeiro, desconhecido, desconhecido ). 
+implicacao( desconhecido, X, desconhecido ) :- X \= verdadeiro.
+implicacao( verdadeiro, falso, falso ).
+
+disjuncao( verdadeiro, X, verdadeiro ).
+disjuncao( X, verdadeiro, verdadeiro ).
+disjuncao( desconhecido, Y, desconhecido ) :- Y \= verdadeiro.
+disjuncao( Y, desconhecido, desconhecido ) :- Y \= verdadeiro.
+disjuncao( falso, falso, falso ).
+
+conjuncao( verdadeiro, verdadeiro, verdadeiro ).
+conjuncao( falso, _, falso ).
+conjuncao( _, falso, falso ).
+conjuncao( desconhecido, verdadeiro, desconhecido ).
+conjuncao( verdadeiro, desconhecido, desconhecido ).
+
+%---------- Extensão do meta-predicado demo implementado com as nossas definições------------
+%---------- Questao, Resposta -> {V, F, D} ----------------------------------(PARTE II)------
+
+demo( P <=> X, V ) :- demo( P, V1 ), demo( X, V2 ), equivalencia( V1, V2, V ), !.
+demo( P => X, V )  :- demo( P, V1 ), demo( X, V2 ), implicacao( V1, V2, V ), !.
+demo( P $$ X, V )  :- demo( P, V1 ), demo( X, V2 ), disjuncao( V1, V2, V ), !.
+demo( P && X, V )  :- demo( P, V1 ), demo( X, V2 ), conjuncao( V1, V2, V ), !.
+
 
 %---------- Extensão do meta-predicado demo: Questao, Resposta -> {V, F, D} ---(PARTE II)------
 
@@ -606,3 +645,7 @@ solucoes_servico(IDS,R) :- solucoes(servico(IDS,D,I,C),servico(IDS,D,I,C),[R|_])
 % dado servico -------------------------------------------------------------------------------
 
 total_consultas(IDS,R) :- solucoes((IDC,D,U,IDS,C),(servico(IDS,DS,I,CS),consulta(IDC,D,U,IDS,C)),S),comprimento(S,R).
+
+%-------------------- Predicado que permite identificar um servico dado um id ----------------
+
+
