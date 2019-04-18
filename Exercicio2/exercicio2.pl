@@ -549,7 +549,9 @@ excecao(utente(65,'Miguelinho',D,'Pacos de Ferreira')) :- D >= 25, D =< 30.
 consulta(10,11-05-19,5,custo_desconhecido).
 excecao(consulta(10,11-05-19,5,C)) :- C >= 50, D =< 75.
 
-
+%-----------------------------------------(PARTE II)-----------------------------------------
+%---------- Transformar conhecimento imperfeito em conhecimento perfeito --------------------
+%--------------------------------------------------------------------------------------------
 
 
 
