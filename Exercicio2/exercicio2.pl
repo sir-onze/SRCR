@@ -8,7 +8,6 @@
 :- set_prolog_flag( discontiguous_warnings,off ).
 :- set_prolog_flag( single_var_warnings,off ).
 :- set_prolog_flag( unknown,fail ).
-:- set_prolog_flag(answer_write_options,[max_depth(0)]).
 :- op(900,xfy,'::').
 
 % - Definicoes iniciais de entidades presentes na base de conhecimento:
@@ -369,10 +368,11 @@ custoData(DAT,R) :-
 	soma(R1,R).
 
 
-%--------------------------------------------------------------------------------------------
-%---------- Conhecimento Incerto --------------(PARTE II)---------------------------------------------
+%-----------------------------------------(PARTE II)-----------------------------------------
+%---------- Conhecimento Incerto - Conhecimento desconhecido mas dentro de um conjunto ------
+%----------------------------------- indeterminado de hipóteses -----------------------------
 
-%-------------- Utente ------------------
+%-------------------------------------------Utente ------------------------------------------
 excecao(utente(ID,_,IDADE,CIDADE)) :-
 	utente(ID,nome_deconhecido,IDADE,CIDADE).
 
@@ -395,7 +395,7 @@ excecao(utente(ID,_,_,CIDADE)) :-
 	utente(ID,nome_deconhecido,idade_desconhecida,CIDADE).
 
 
-%-------------- Consulta ------------------
+%------------------------------------------- Consulta -----------------------------------------
 
 excecao(consulta(IDC,_,IDU,IDS,CUSTO)) :-
 	consulta(IDC,data_desconhecida,IDU,IDS,CUSTO).
@@ -410,7 +410,7 @@ excecao(consulta(IDC,_,IDU,IDS,_)) :-
 	consulta(IDC,data_desconhecida,IDU,IDS,custo_desconhecido).
 
 
-%-------------- Serviço ------------------
+%------------------------------------------- Serviço ------------------------------------------
 
 excecao(servico(IDS,_,INST,CIDADE)) :-
 	servico(IDS,descricao_desconhecida,INST,CIDADE).
@@ -424,13 +424,15 @@ excecao(servico(IDS,DESC,INST,_)) :-
 excecao(servico(IDS,DESC,_,_)) :-
 	servico(IDS,DESC,instituicao_desconhecida,cidade_desconhecida).	
 
-%-------------- Instituição ------------------
+%------------------------------------------- Instituição ---------------------------------------
 
 excecao(instituicao(IDI,NOME,_)) :-
 	instituicao(IDI,NOME,cidade_desconhecida).
 
+
+%-----------------------------------------(PARTE II)-----------------------------------------
+%-----------------------------------Conhecimento Negativo -----------------------------------
 %--------------------------------------------------------------------------------------------
-%---------- Conhecimento Negativo -------------(PARTE II)----------------------------------------------
 
 -utente(ID,NOME,IDADE,CIDADE) :-
 	nao(utente(ID,NOME,IDADE,CIDADE)),
@@ -461,7 +463,7 @@ consulta(55,08-08-08,11,12,custo_desconhecido).
 
 % esta linha serve apenas para anular o carater que o editor reconhece como comentario >
 
-% um servico foi realizado numa instituicao desconhecida que de certo não foi um centro de saude
+% um servico foi realizado numa instituicao desconhecida que de certeza não foi um centro de saude
 servico(20,ortopedia,instituicao_desconhecida,braga).
 -servico(20,ortopedia,centrodesaude,braga).
 
@@ -469,11 +471,14 @@ servico(20,ortopedia,instituicao_desconhecida,braga).
 instituicao(15,enfermaria,cidade_desconhecida).
 -instituicao(15,enfermaria,porto).
 
-%--------------------------------------------------------------------------------------------
-%---------- Conhecimento Interdito ------------(PARTE II)-----------------------------------------------
+%-----------------------------------------(PARTE II)-----------------------------------------
+%---------- Conhecimento Interdito REVISAAAAAOOOO - Conhecimento desconhecido e que nunca poderá ser -------
+%----------------------------------- conhecido ----------------------------------------------
 
 % utente 4444 tem cidade que ninguém pode conhecer
+
 utente(4444,marcelino,15,cidade_desconhecida).
+
 %excecao(utente(IDU,NOME,IDADE,CIDADE)) :- utente(IDU,NOME,IDADE,cidade_desconhecida).
 nulo(cidade_desconhecida).
 +utente(4444,marcelino,15,cidade_desconhecida) :: (
@@ -508,7 +513,43 @@ nulo(utente_desconhecido).
 	comprimento(S,N),
 	N == 0). 
 
-%--------------------------------------------------------------------------------------------
-%---------- Conhecimento Impreciso ----------(PARTE II)-------------------------------------------------
+%-----------------------------------------(PARTE II)-----------------------------------------
+%---------- Conhecimento Impreciso - Conhecimento desconhecido mas dentro de um conjunto ----
+%----------------------------------- determinado de hipóteses -------------------------------
+
+% O senhor Cesário tem alguma idade e devido a uma falha na altura do seu registo como utente
+% não deu para perceber se mora na "Póvoa de Varzim" ou em "Póvoa de Lanhoso" uma vez que 
+% apenas escreveu Póvoa.
+
+utente(14,'Cesario',84,cidade_desconhecida).
+excecao(utente(14, 'Cesario', 84, 'Povoa de Varzim')).
+excecao(utente(14, 'Cesario', 84, 'Povoa de Lanhoso')).
+
+
+% Na altura do registo de uma consulta ficou-se na dúvida se o serviço à qual está associada era
+% o 5 ou o 15.
+
+
+consulta(10,11-05-19,servico_desconhecido,25).
+excecao(consulta(10,11-05-19,5,25)).
+excecao(consulta(10,11-05-19,15,25)).
+
+% Na altura do registo de um utente não se apontou a idade do utente mas sabe-se que tem entre
+% 25 e 30 anos.
+
+utente(65,'Miguelinho',idade_desconhecida,'Pacos de Ferreira').
+
+excecao(utente(65,'Miguelinho',D,'Pacos de Ferreira')) :- D >= 25, D =< 30.
+
+
+
+%% Na altura do registo de uma consulta não se apontou o custo da mesma mas sabe-se que ficou entre
+% 50 e 75 euros.
+
+consulta(10,11-05-19,5,custo_desconhecido).
+excecao(consulta(10,11-05-19,5,C)) :- C >= 50, D =< 75.
+
+
+
 
 
