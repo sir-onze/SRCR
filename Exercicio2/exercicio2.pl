@@ -533,9 +533,9 @@ excecao(utente(14, 'Cesario', 84, 'Povoa de Lanhoso')).
 % o 5 ou o 15.
 
 
-consulta(10,11-05-19,servico_desconhecido,25).
-excecao(consulta(10,11-05-19,5,25)).
-excecao(consulta(10,11-05-19,15,25)).
+consulta(10,11-05-19,8,servico_desconhecido,25).
+excecao(consulta(10,11-05-19,8,5,25)).
+excecao(consulta(10,11-05-19,8,15,25)).
 
 % Na altura do registo de um utente não se apontou a idade do utente mas sabe-se que tem entre
 % 25 e 30 anos.
@@ -557,10 +557,30 @@ excecao(consulta(10,11-05-19,5,C)) :- C >= 50, D =< 75.
 %--------------------------------------------------------------------------------------------
 
 
-substituir_utente_cidade(IDU,MORADA) :- solucoes_utente(IDU,utente(IDU,N,I,M)) ,substitui(utente(IDU,N,I,M),utente(IDU,N,I,MORADA)).
-substituir_utente_idade(IDU,IDADE).
-substituir_consulta_servico(IDC,SERVICO).
-substituir_consulta_custo(IDC,CUSTO).
+substituir_utente_cidade(IDU,CIDADE) :- solucoes_utente(IDU,utente(IDU,N,I,C)) ,
+										substitui(utente(IDU,N,I,C),utente(IDU,N,I,CIDADE)).
+
+substituir_utente_idade(IDU,IDADE) :- solucoes_utente(IDU,utente(IDU,N,I,M)),
+									  substitui(utente(IDU,N,I,M),utente(IDU,N,IDADE,M)).
+
+substituir_utente_nome(IDU,NOME) :- solucoes_utente(IDU,utente(IDU,N,I,M)),
+									substitui(utente(IDU,N,I,M),utente(IDU,NOME,I,M)).
+
+
+substituir_consulta_servico(IDC,SERVICO) :- solucoes_consulta(IDC,consulta(IDC,D,U,S,C)),
+										substitui(consulta(IDC,D,U,S,C),consulta(IDC,D,U,SERVICO,C)).
+
+substituir_consulta_custo(IDC,CUSTO) :- solucoes_consulta(IDC,consulta(IDC,D,U,S,C)),
+										substitui(consulta(IDC,D,U,S,C),consulta(IDC,D,U,S,CUSTO)).
+
+substituir_consulta_data(IDC,DATA) :- solucoes_consulta(IDC,consulta(IDC,D,U,S,C)),
+									  substitui(consulta(IDC,D,U,S,C),consulta(IDC,DATA,U,S,C)).
+
+substituir_servico_instituicao(IDS,INSTITUICAO) :- solucoes_servico(IDS,servico(IDS,D,I,C)),
+												   substitui(servico(IDS,D,I,C),servico(IDS,D,INSTITUICAO,C)).
+
+substituir_servico_cidade(IDS,CIDADE) :- solucoes_servico(IDS,servico(IDS,D,I,C)),
+										 substitui(servico(IDS,D,I,C),servico(IDS,D,INSTITUICAO,CIDADE)).
 
 
 
@@ -570,13 +590,18 @@ substituir_consulta_custo(IDC,CUSTO).
 
 %-------------------- Predicado que permite identificar um utente dado um id ----------------
 
-% é guardado como elemento de uma lista para que depois possa chamar o predicado com utente 
-% de outra maneira o prolog ficava à espera de uma lista.
+% NOTA: o resultado é guardado como elemento de uma lista para que depois possa chamar o predicado 
+% com utente,de outra maneira o prolog ficava à espera de uma lista.
 
 solucoes_utente(IDU,R) :- solucoes(utente(IDU,N,I,C),utente(IDU,N,I,C),[R|_]).
 
+%-------------------- Predicado que permite identificar uma consulta dado um id ----------------
 
+solucoes_consulta(IDC,R) :- solucoes(consulta(IDC,D,U,S,C),consulta(IDC,D,U,S,C),[R|_]).
 
+%-------------------- Predicado que permite identificar um servico dado um id ----------------
 
+solucoes_servico(IDS,R) :- solucoes(servico(IDS,D,I,C),servico(IDS,D,I,C),[R|_]).
 
+%servico: IdServ, Descrição, Instituição, Cidade -> {V,F}
 
