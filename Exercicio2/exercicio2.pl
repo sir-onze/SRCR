@@ -8,6 +8,7 @@
 :- set_prolog_flag( discontiguous_warnings,off ).
 :- set_prolog_flag( single_var_warnings,off ).
 :- set_prolog_flag( unknown,fail ).
+%:- set_prolog_flag(answer_write_options,[max_depth(0)]).
 :- op(900,xfy,'::').
 :- op(996, xfy, '&&' ).  % operador de conjuncao
 :- op(997, xfy, '$$' ).  % operador de disjuncao 
@@ -100,6 +101,14 @@ solucoes(T,Q,S) :- findall(T, Q, S).
 
 substitui(P,R) :- remove(P),evolucao(R).
 substitui(P,R) :- assert(P),!,fail.
+
+remove_nao_inteiros([],[]).
+remove_nao_inteiros([H|T],[H|R]) :- 
+	integer(H),
+	remove_nao_inteiros(T,R).
+remove_nao_inteiros([H|T],R) :- 
+	\+integer(H),
+	remove_nao_inteiros(T,R).
 
 %---------- Extensão do predicado utente: IdU, Nome, Idade, Morada --------------------------
 
@@ -583,6 +592,7 @@ utente(65,'Miguelinho',idade_desconhecida,'Pacos de Ferreira').
 
 excecao(utente(65,'Miguelinho',D,'Pacos de Ferreira')) :- D >= 25, D =< 30.
 
+% esta linha serve apenas para anular o carater que o editor reconhece como comentario >
 
 
 %% Na altura do registo de uma consulta não se apontou o custo da mesma mas sabe-se que ficou entre
@@ -590,6 +600,10 @@ excecao(utente(65,'Miguelinho',D,'Pacos de Ferreira')) :- D >= 25, D =< 30.
 
 consulta(10,11-05-19,5,custo_desconhecido).
 excecao(consulta(10,11-05-19,5,C)) :- C >= 50, D =< 75.
+
+
+% esta linha serve apenas para anular o carater que o editor reconhece como comentario >
+
 
 %-----------------------------------------(PARTE II)-----------------------------------------
 %---------- Transformar conhecimento imperfeito em conhecimento perfeito --------------------
@@ -667,12 +681,17 @@ numero_utentes(R) :- solucoes(Custo,
 %-------------------- Predicado que permite calcular o total gasto por todos os utentes no
 % sistema -----------------------------------------------------------------------------------
 
-custo_utentes(R) :- solucoes(nao(atom(Custo)),
+custo_utentes(R) :- solucoes(Custo,
 					(utente(IDU,NOME,IDADE,CID),
 					servico(ID,DESC,INST,CIDADE),
-					consulta(IDC,DAT,IDU,ID,nao(atom(Custo)))),R1),
-					soma(R1,R).
+					consulta(IDC,DAT,IDU,ID,Custo)),R1),
+					remove_nao_inteiros(R1,R2),
+					soma(R2,R).
 
 %-------------------- Predicado que permite a media de gastos por utente ---------
 
-custo_medio_utente(R) :- numero_utentes(Y),custo_utentes(X),R is X/Y.
+custo_medio_utente(R) :- 
+	numero_utentes(Y),
+	custo_utentes(X),
+	R is X/Y.
+
