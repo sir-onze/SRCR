@@ -646,6 +646,33 @@ solucoes_servico(IDS,R) :- solucoes(servico(IDS,D,I,C),servico(IDS,D,I,C),[R|_])
 
 total_consultas(IDS,R) :- solucoes((IDC,D,U,IDS,C),(servico(IDS,DS,I,CS),consulta(IDC,D,U,IDS,C)),S),comprimento(S,R).
 
-%-------------------- Predicado que permite identificar um servico dado um id ----------------
+%-------------------- Predicado que permite identificar todos os utentes por cidade ----------
+
+utentes_cidade(CIDADE,R) :- solucoes((IDU,N,I,C),utente(IDU,N,I,CIDADE),R).
+
+%-------------------- Predicado que permite calcular a média de uma lista -------------------
+
+media(X,Y,R) :- R is (X/Y).
 
 
+%-------------------- Predicado que permite calcular o numero de utentes que realizaram
+% consultas no sistema ----------------------------------------------------------------------
+
+numero_utentes(R) :- solucoes(Custo,
+					(utente(IDU,NOME,IDADE,CID),
+					servico(ID,DESC,INST,CIDADE),
+					consulta(IDC,DAT,IDU,ID,Custo)),R1),
+					comprimento(R1,R).
+
+%-------------------- Predicado que permite calcular o total gasto por todos os utentes no
+% sistema -----------------------------------------------------------------------------------
+
+custo_utentes(R) :- solucoes(nao(atom(Custo)),
+					(utente(IDU,NOME,IDADE,CID),
+					servico(ID,DESC,INST,CIDADE),
+					consulta(IDC,DAT,IDU,ID,nao(atom(Custo)))),R1),
+					soma(R1,R).
+
+%-------------------- Predicado que permite a media de gastos por utente ---------
+
+custo_medio_utente(R) :- numero_utentes(Y),custo_utentes(X),R is X/Y.
