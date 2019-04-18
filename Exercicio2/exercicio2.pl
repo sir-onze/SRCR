@@ -59,6 +59,9 @@ remReps(T,R).
 
 solucoes(T,Q,S) :- findall(T, Q, S).
 
+substitui(P,R) :- remove(P),evolucao(R).
+substitui(P,R) :- assert(P),!,fail.
+
 %---------- Extensão do predicado utente: IdU, Nome, Idade, Morada --------------------------
 
 utente(12345,joaocarlos,20,braga).
@@ -552,6 +555,28 @@ excecao(consulta(10,11-05-19,5,C)) :- C >= 50, D =< 75.
 %-----------------------------------------(PARTE II)-----------------------------------------
 %---------- Transformar conhecimento imperfeito em conhecimento perfeito --------------------
 %--------------------------------------------------------------------------------------------
+
+
+substituir_utente_cidade(IDU,MORADA) :- solucoes_utente(IDU,utente(IDU,N,I,M)) ,substitui(utente(IDU,N,I,M),utente(IDU,N,I,MORADA)).
+substituir_utente_idade(IDU,IDADE).
+substituir_consulta_servico(IDC,SERVICO).
+substituir_consulta_custo(IDC,CUSTO).
+
+
+
+%-----------------------------------------(PARTE II)-----------------------------------------
+%---------------------------------- Funcionalidades Extra -----------------------------------
+%--------------------------------------------------------------------------------------------
+
+%-------------------- Predicado que permite identificar um utente dado um id ----------------
+
+% é guardado como elemento de uma lista para que depois possa chamar o predicado com utente 
+% de outra maneira o prolog ficava à espera de uma lista.
+
+solucoes_utente(IDU,R) :- solucoes(utente(IDU,N,I,C),utente(IDU,N,I,C),[R|_]).
+
+
+
 
 
 
