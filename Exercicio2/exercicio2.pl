@@ -527,9 +527,7 @@ instituicao(15,enfermaria,cidade_desconhecida).
 %----------------------------------- conhecido ----------------------------------------------
 
 % utente 4444 tem cidade que ninguém pode conhecer
-
 utente(4444,marcelino,15,cidade_desconhecida).
-
 %excecao(utente(IDU,NOME,IDADE,CIDADE)) :- utente(IDU,NOME,IDADE,cidade_desconhecida).
 nulo(cidade_desconhecida).
 +utente(IDU,NOME,IDADE,CIDADE) :: (
