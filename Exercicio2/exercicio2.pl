@@ -8,7 +8,7 @@
 :- set_prolog_flag( discontiguous_warnings,off ).
 :- set_prolog_flag( single_var_warnings,off ).
 :- set_prolog_flag( unknown,fail ).
-%:- set_prolog_flag(answer_write_options,[max_depth(0)]).
+:- set_prolog_flag(answer_write_options,[max_depth(0)]).
 :- op(900,xfy,'::').
 :- op(996, xfy, '&&' ).  % operador de conjuncao
 :- op(997, xfy, '$$' ).  % operador de disjuncao 
@@ -112,21 +112,21 @@ remove_nao_inteiros([H|T],R) :-
 
 %---------- Extensão do predicado utente: IdU, Nome, Idade, Morada --------------------------
 
-utente(12345,joaocarlos,20,braga).
-utente(67810,martagalo,20,barcelos).
-utente(11123,carlamuamba,20,luanda).
-utente(14156,pedroavec,20,paris).
-utente(17189,joaodostrespes,20,braga).
-utente(20212,ricardoultra,20,guimaraes).
-utente(23245,joanatripeira,20,porto).
-utente(26278,joaodasfrigideiras,20,braga).
-utente(28293,margaridaleao,20,braga).
-utente(31323,fredericasantos,20,beja).
-utente(33345,paulotabuada,20,sintra).
-utente(51523,adrianodovitoria20,aveiro).
-utente(11,tiagotombado,22,braga).
-utente(8,ricardosquirtle,22,braga).
-utente(88,lucasblastoise,23,braga).
+utente(12345,'joaocarlos',20,'braga').
+utente(67810,'martagalo',20,'barcelos').
+utente(11123,'carlamuamba',20,'luanda').
+utente(14156,'pedroavec',20,'paris').
+utente(17189,'joaodostrespes',20,'braga').
+utente(20212,'ricardoultra',20,'guimaraes').
+utente(23245,'joanatripeira',20,'porto').
+utente(26278,'joaodasfrigideiras',20,'braga').
+utente(28293,'margaridaleao',20,'braga').
+utente(31323,'fredericasantos',20,'beja').
+utente(33345,'paulotabuada',20,'sintra').
+utente(51523,'adrianodovitoria',20,'aveiro').
+utente(11,'tiagotombado',22,'braga').
+utente(8,'ricardosquirtle',22,'braga').
+utente(88,'lucasblastoise',23,'braga').
 
 %---------- Invariante Estrutural: não permite inserção de utentes duplicados ---------------
 
@@ -153,21 +153,21 @@ utente(88,lucasblastoise,23,braga).
 
 %---------- Extensão do predicado serviço: IdS, Descrição, Instituição, Cidade --------------
 
-servico(1,cardiologia,hospital,braga).
-servico(2,enfermaria,hospital,braga).
-servico(3,psiquiatria,hospital,guimaraes).
-servico(4,podologia,centrodesaude,barcelos).
-servico(5,ginecologia,hospital,guimaraes).
-servico(6,podologia,clinica,barcelos).
-servico(7,dermatologia,clinicaprivada,porto).
-servico(8,enfermaria,centrodesaude,barcelos).
-servico(9,oftalmologia,hospital,guimaraes).
-servico(10,fisioterapia,hospital,porto).
-servico(11,ortopedia,clinicaprivada,barcelos).
-servico(12,enfermaria,hospital,porto).
-servico(13,enfermaria,centrodesaude,guimaraes).
-servico(14,clinicageral,centrodesaude,braga).
-servico(15,urgencia,hospitalprivado,braga).
+servico(1,'cardiologia','hospital','braga').
+servico(2,'enfermaria','hospital','braga').
+servico(3,'psiquiatria','hospital','guimaraes').
+servico(4,'podologia','centrodesaude','barcelos').
+servico(5,'ginecologia','hospital','guimaraes').
+servico(6,'podologia','clinica','barcelos').
+servico(7,'dermatologia','clinicaprivada','porto').
+servico(8,'enfermaria','centrodesaude','barcelos').
+servico(9,'oftalmologia','hospital','guimaraes').
+servico(10,'fisioterapia','hospital','porto').
+servico(11,'ortopedia','clinicaprivada','barcelos').
+servico(12,'enfermaria','hospital','porto').
+servico(13,'enfermaria','centrodesaude','guimaraes').
+servico(14,'clinicageral','centrodesaude','braga').
+servico(15,'urgencia','hospitalprivado','braga').
 
 %---------- Invariante Estrutural: não permite inserção de serviços duplicados ---------------
 
@@ -195,15 +195,15 @@ servico(15,urgencia,hospitalprivado,braga).
 
 %---------- Extensão do predicado consulta: IdC, Data, IdU, IdS, Custo ----------------------
 
-consulta(1,01-02-18,12345,1,50).
-consulta(2,20-03-19,88,5,70).
-consulta(3,12-02-18,12345,1,50).
-consulta(4,22-05-18,12345,7,50).
-consulta(5,25-06-18,12345,15,50).
-consulta(6,25-06-18,23245,15,50).
-consulta(7,02-02-18,11,15,50).
-consulta(8,02-02-18,8,12,50).
-consulta(9,02-02-18,31323,5,50).
+consulta(1,'01-02-18',12345,1,50).
+consulta(2,'20-03-19',88,5,70).
+consulta(3,'12-02-18',12345,1,50).
+consulta(4,'22-05-18',12345,7,50).
+consulta(5,'25-06-18',12345,15,50).
+consulta(6,'25-06-18',23245,15,50).
+consulta(7,'02-02-18',11,15,50).
+consulta(8,'02-02-18',8,12,50).
+consulta(9,'02-02-18',31323,5,50).
 
 %---------- Invariante Estrutural: não permite inserção de consultas duplicadas -------------
 
@@ -287,15 +287,15 @@ eliminaC(ID,DAT,IDU,IDS,Custo) :-
 %----------   de servico --------------------------------------------------------------------
 %----------   instituicao : idInst, Nome, Cidade -> {V,F}
 
-instituicao(1,hospital,braga).
-instituicao(2,hospital,guimaraes).
-instituicao(3,centrodesaude,barcelos).
-instituicao(4,clinica,barcelos).
-instituicao(5,clinicaprivada,porto).
-instituicao(6,hospital,porto).
-instituicao(7,hospitalprivado,braga).
-instituicao(8,centrodesaude,braga).
-instituicao(9,centrodesaude,guimaraes).
+instituicao(1,'hospital','braga').
+instituicao(2,'hospital','guimaraes').
+instituicao(3,'centrodesaude','barcelos').
+instituicao(4,'clinica','barcelos').
+instituicao(5,'clinicaprivada','porto').
+instituicao(6,'hospital','porto').
+instituicao(7,'hospitalprivado','braga').
+instituicao(8,'centrodesaude','braga').
+instituicao(9,'centrodesaude','guimaraes').
 
 
 %-------- 4-Extensão do Predicado que permite identificar utentes por id e nome,servico por
@@ -451,7 +451,7 @@ excecao(utente(ID,_,_,CIDADE)) :-
 excecao(consulta(IDC,_,IDU,IDS,CUSTO)) :-
 	consulta(IDC,data_desconhecida,IDU,IDS,CUSTO).
 
-excecao(consulta(IDC,DATA,IDU, _,CUSTO)) :-
+excecao(consulta(IDC,DATA,IDU,_,CUSTO)) :-
 	consulta(IDC,DATA,IDU,servico_desconhecido,CUSTO).
 
 excecao(consulta(IDC,DATA,IDU,IDS,_)) :-
@@ -503,61 +503,61 @@ excecao(instituicao(IDI,NOME,_)) :-
 
 
 % um utente tem idade desconhecida, mas de certeza diferente de 5
-utente(234,vitinho,idade_desconhecida,guimaraes).
--utente(234,vitinho,5,guimaraes).
+utente(234,'vitinho',idade_desconhecida,'guimaraes').
+-utente(234,'vitinho',5,'guimaraes').
 
 % uma consulta tem um custo desconhecido que de certeza não está entre 0 e 10
-consulta(55,08-08-08,11,12,custo_desconhecido).
--consulta(55,08-08-08,11,12,C) :- 
+consulta(55,'08-08-08',11,12,custo_desconhecido).
+-consulta(55,'08-08-08',11,12,C) :- 
 	C >= 0,
 	C =< 10.
 
 % esta linha serve apenas para anular o carater que o editor reconhece como comentario >
 
 % um servico foi realizado numa instituicao desconhecida que de certeza não foi um centro de saude
-servico(20,ortopedia,instituicao_desconhecida,braga).
--servico(20,ortopedia,centrodesaude,braga).
+servico(20,'ortopedia',instituicao_desconhecida,'braga').
+-servico(20,'ortopedia','centrodesaude','braga').
 
 % existe uma instituicao cuja cidade é desconhecida e que de certo nao é o porto
-instituicao(15,enfermaria,cidade_desconhecida).
--instituicao(15,enfermaria,porto).
+instituicao(15,'posto medico',cidade_desconhecida).
+-instituicao(15,'posto medico','porto').
 
 %-----------------------------------------(PARTE II)-----------------------------------------
 %---------- Conhecimento Interdito REVISAAAAAOOOO - Conhecimento desconhecido e que nunca poderá ser -------
 %----------------------------------- conhecido ----------------------------------------------
 
 % utente 4444 tem cidade que ninguém pode conhecer
-utente(4444,marcelino,15,cidade_desconhecida).
+utente(4444,'marcelino',15,cidade_desconhecida).
 %excecao(utente(IDU,NOME,IDADE,CIDADE)) :- utente(IDU,NOME,IDADE,cidade_desconhecida).
 nulo(cidade_desconhecida).
 +utente(IDU,NOME,IDADE,CIDADE) :: (
 	solucoes(
 		(IDU,NOME,IDADE,CIDADE),
-		(utente(4444,marcelino,15,CIDADE),nao(nulo(CIDADE))),
+		(utente(4444,'marcelino',15,CIDADE),nao(nulo(CIDADE))),
 		S),
 	comprimento(S,N),
 	N == 0).
 
 % utente 5551 tem idade que ninguém pode conhecer
-utente(5551,marcela,idade_desconhecida,evora).
+utente(5551,'marcela',idade_desconhecida,'evora').
 %excecao(utente(IDU,NOME,IDADE,CIDADE)) :- utente(IDU,NOME,idade_desconhecida,CIDADE).
 nulo(idade_desconhecida).
 +utente(IDU,NOME,IDADE,CIDADE) :: (
 	solucoes(
 		(IDU,NOME,IDADE,CIDADE),
-		(utente(5551,marcela,IDADE,evora),nao(nulo(IDADE))),
+		(utente(5551,'marcela',IDADE,'evora'),nao(nulo(IDADE))),
 		S),
 	comprimento(S,N),
 	N == 0).
 
 % consulta 5050 tem utente que ninguém pode conhecer
-consulta(5050,11-11-11,utente_desconhecido,1,20).
+consulta(5050,'11-11-11',utente_desconhecido,1,20).
 %excecao(consulta(IDC,DATA,IDU,IDS,CUSTO)) :- consulta(IDC,DATA,utente_desconhecido,IDS,CUSTO).
 nulo(utente_desconhecido).
 +consulta(IDC,DATA,IDU,IDS,CUSTO) :: (
 	solucoes(
 		(IDC,DATA,IDU,IDS,CUSTO), 
-		(consulta(5050,11-11-11,IDU,1,20), nao(nulo(IDU))),
+		(consulta(5050,'11-11-11',IDU,1,20), nao(nulo(IDU))),
 		S),
 	comprimento(S,N),
 	N == 0). 
@@ -569,37 +569,24 @@ nulo(utente_desconhecido).
 % O senhor Cesário tem alguma idade e devido a uma falha na altura do seu registo como utente
 % não deu para perceber se mora na "Póvoa de Varzim" ou em "Póvoa de Lanhoso" uma vez que 
 % apenas escreveu Póvoa.
-
-utente(14,'Cesario',84,cidade_desconhecida).
 excecao(utente(14, 'Cesario', 84, 'Povoa de Varzim')).
 excecao(utente(14, 'Cesario', 84, 'Povoa de Lanhoso')).
 
-
 % Na altura do registo de uma consulta ficou-se na dúvida se o serviço à qual está associada era
 % o 5 ou o 15.
-
-
-consulta(10,11-05-19,8,servico_desconhecido,25).
-excecao(consulta(10,11-05-19,8,5,25)).
-excecao(consulta(10,11-05-19,8,15,25)).
+excecao(consulta(10,'11-05-19',8,5,25)).
+excecao(consulta(10,'11-05-19',8,15,25)).
 
 % Na altura do registo de um utente não se apontou a idade do utente mas sabe-se que tem entre
 % 25 e 30 anos.
-
-utente(65,'Miguelinho',idade_desconhecida,'Pacos de Ferreira').
-
 excecao(utente(65,'Miguelinho',D,'Pacos de Ferreira')) :- D >= 25, D =< 30.
-
 % esta linha serve apenas para anular o carater que o editor reconhece como comentario >
-
 
 %% Na altura do registo de uma consulta não se apontou o custo da mesma mas sabe-se que ficou entre
 % 50 e 75 euros.
-
-consulta(10,11-05-19,5,custo_desconhecido).
-excecao(consulta(10,11-05-19,5,C)) :- C >= 50, D =< 75.
-
-
+excecao(consulta(15,'11-05-19',51523,13,C)) :- 
+	C >= 50, 
+	C =< 75.
 % esta linha serve apenas para anular o carater que o editor reconhece como comentario >
 
 
@@ -616,7 +603,6 @@ substituir_utente_idade(IDU,IDADE) :- solucoes_utente(IDU,utente(IDU,N,I,M)),
 
 substituir_utente_nome(IDU,NOME) :- solucoes_utente(IDU,utente(IDU,N,I,M)),
 									substitui(utente(IDU,N,I,M),utente(IDU,NOME,I,M)).
-
 
 substituir_consulta_servico(IDC,SERVICO) :- solucoes_consulta(IDC,consulta(IDC,D,U,S,C)),
 										    substitui(consulta(IDC,D,U,S,C),consulta(IDC,D,U,SERVICO,C)).
