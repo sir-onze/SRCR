@@ -532,9 +532,9 @@ utente(4444,marcelino,15,cidade_desconhecida).
 
 %excecao(utente(IDU,NOME,IDADE,CIDADE)) :- utente(IDU,NOME,IDADE,cidade_desconhecida).
 nulo(cidade_desconhecida).
-+utente(4444,marcelino,15,cidade_desconhecida) :: (
++utente(IDU,NOME,IDADE,CIDADE) :: (
 	solucoes(
-		(4444,marcelino,15,cidade_desconhecida),
+		(IDU,NOME,IDADE,CIDADE),
 		(utente(4444,marcelino,15,CIDADE),nao(nulo(CIDADE))),
 		S),
 	comprimento(S,N),
@@ -544,9 +544,9 @@ nulo(cidade_desconhecida).
 utente(5551,marcela,idade_desconhecida,evora).
 %excecao(utente(IDU,NOME,IDADE,CIDADE)) :- utente(IDU,NOME,idade_desconhecida,CIDADE).
 nulo(idade_desconhecida).
-+utente(5551,marcela,idade_desconhecida,evora) :: (
++utente(IDU,NOME,IDADE,CIDADE) :: (
 	solucoes(
-		(5551,marcela,idade_desconhecida,evora),
+		(IDU,NOME,IDADE,CIDADE),
 		(utente(5551,marcela,IDADE,evora),nao(nulo(IDADE))),
 		S),
 	comprimento(S,N),
