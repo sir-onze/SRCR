@@ -445,6 +445,7 @@ excecao(utente(ID,_,IDADE,_)) :-
 excecao(utente(ID,_,_,CIDADE)) :-
 	utente(ID,nome_deconhecido,idade_desconhecida,CIDADE).
 
+utente(676869,'marina',15,cidade_desconhecida).
 
 %------------------------------------------- Consulta -----------------------------------------
 
@@ -646,7 +647,7 @@ total_consultas(IDS,R) :- solucoes((IDC,D,U,IDS,C),(servico(IDS,DS,I,CS),consult
 
 %-------------------- Predicado que permite identificar todos os utentes por cidade ----------
 
-utentes_cidade(CIDADE,R) :- solucoes((IDU,N,I,C),utente(IDU,N,I,CIDADE),R).
+utentes_cidade(CIDADE,R) :- solucoes((IDU,N,I,CIDADE),utente(IDU,N,I,CIDADE),R).
 
 %-------------------- Predicado que permite calcular a média de uma lista -------------------
 
